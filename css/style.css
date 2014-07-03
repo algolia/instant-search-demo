@@ -1,22 +1,18 @@
+/* Layout */
+
+.navbar {
+  padding-top: 1em;
+}
+
+/* /Layout */
+
+/* Hits */
+
+/** Highlighted words **/
 .hit em {
   font-style: normal;
   font-weight: bold;
   background: #ffffe5;
-}
-
-.list-group-item {
-  padding: 5px !important;
-}
-.list-group-item.refined {
-  background: #BBD9F4;
-}
-.list-group-item.refined a {
-  font-weight: bold;
-  color: #24527E;
-}
-
-.navbar {
-  padding-top: 1em;
 }
 
 .star-img {
@@ -36,15 +32,39 @@
 .stars_4_half { background-position: -3px -147px }
 .stars_5 { background-position: -3px -165px }
 
+/* /Hits */
+
+
+/* Facets */
+
+.list-group-item {
+  padding: 5px;
+}
+.list-group-item.refined {
+  background: #BBD9F4;
+}
+.list-group-item.refined a {
+  font-weight: bold;
+  color: #24527E;
+}
+
+/** Slider **/
 .slider {
   margin-left: 10px;
   margin-right: 10px;
 }
 
 .slider-selection {
-  background: #D9EDF7 !important;
+  background: #D9EDF7;
 }
+/** /Slider **/
+
+/** Checkbox **/
 
 input[type="checkbox"]:focus, input[type="checkbox"]:active, button[type="button"].btn-link:focus, button[type="button"].btn-link:active {
   outline: none;
 }
+
+/** /Checkbox **/
+
+/* /Facets */

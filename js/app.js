@@ -1,12 +1,21 @@
 (function($) {
 
+  // Client initialization
   var algolia = new AlgoliaSearch('sylvain', 'd962ad6512680f755df047e03a6af6fd');
+
+  // Helper initialization
   var helper = new AlgoliaSearchHelper(algolia, 'yelp_business', {
+    // list of conjunctive facets (link to refine)
     facets: ['categories', 'open', 'review_count'],
+
+    // list of disjunctive facets (checkbox to refine)
     disjunctiveFacets: ['review_count_range', 'stars', 'city'],
+
+    // number of results per page
     hitsPerPage: 10
   });
 
+  // DOM binding
   var $hits = $('#hits');
   var $pagination = $('#pagination');
   var $stats = $('#stats');
@@ -18,6 +27,7 @@
   var $sliderTemplate = Hogan.compile($('#slider-template').text());
   var $statsTemplate = Hogan.compile($('#stats-template').text());
 
+  // Helpers
   Number.prototype.numberWithDelimiter = function(delimiter) {
     var number = this + '', delimiter = delimiter || ',';
     var split = number.split('.');
@@ -25,9 +35,9 @@
     return split.join('.');
   };
 
+  // Facets + refinements initialization & configuration
   function sortByCountDesc(a, b) { return b.count - a.count; }
   function sortByNumAsc(a, b) { return parseInt(a.label) - parseInt(b.label); }
-
   var FACETS = {
     'city': { title: 'City', sortFunction: sortByCountDesc },
     'open': { title: 'Open', sortFunction: sortByCountDesc },
@@ -39,15 +49,18 @@
   var refinements = {};
   var minReviewsCount = 0;
 
+  // Callback called on each keystroke, rendering the results
   function searchCallback(success, content) {
     if (!success || content.query != $q.val()) {
+      // do not consider the result if there is an error
+      // or if it is outdated -> query != $q.val()
       return;
     }
 
-    // stats
+    // stats: render the number of results + processing time
     $stats.html($statsTemplate.render({ query: content.query, nbHits: content.nbHits.numberWithDelimiter(), processingTimeMS: content.processingTimeMS, nbHits_plural: content.nbHits != 1 }));
 
-    // hits
+    // hits: display the `hitsPerPage` results
     var html = '';
     for (var i = 0; i < content.hits.length; ++i) {
       var hit = content.hits[i];
@@ -65,20 +78,26 @@
     }
     $hits.html(html);
 
-    // facets
+    // facets: display the conjunctive+disjunctive facets
     html = '';
     for (var j = 0; j < 2; ++j) {
-      var facetType = (['facets', 'disjunctiveFacets'])[j];
-      for (var facet in content[facetType]) {
 
+      // the AlgoliaSearchHelper creates an extra 'disjunctiveFacets' attribute
+      var facetType = (['facets', 'disjunctiveFacets'])[j];
+
+      for (var facet in content[facetType]) {
         if (facet === 'review_count') {
-          // add a slider
-          html += $sliderTemplate.render({ facet: facet, title: FACETS[facet].title, max: content.facets_stats[facet].max, current: minReviewsCount });
+          // add a slider fetching the 'max' value of 'review_count' from `content.facets_stats.review_count`
+          html += $sliderTemplate.render({ facet: facet, title: FACETS.review_count.title, max: content.facets_stats.review_count.max, current: minReviewsCount });
         } else {
+          // other facets
+
+          // collect all values from `content[facetType][facet]` to sort them by FACETS[facet].sortFunction
           var values = [];
-          // sort facets
           for (var v in content[facetType][facet]) {
             var label;
+
+            // for the boolean-based 'open' facet, use smarter naming for the label
             if (facet === 'open' && v === 'true') {
               label = 'Open';
             } else if (facet === 'open' && v === 'false') {
@@ -86,8 +105,10 @@
             } else {
               label = v;
             }
+
             values.push({ label: label, value: v, count: content[facetType][facet][v], refined: helper.isRefined(facet, v) });
           }
+          // sort the values
           values.sort(function(a, b) {
             // sort by the refined states first (put them on top if they are refined)
             if (a.refined != b.refined) {
@@ -98,7 +119,7 @@
             return FACETS[facet].sortFunction(a,b);
           });
 
-          // facet rendering
+          // render the facet
           html += $facetTemplate.render({
             facet: facet,
             title: FACETS[facet].title,
@@ -128,7 +149,7 @@
     // pimp checkboxes
     $('input[type="checkbox"]').checkbox();
 
-    // pagination
+    // render pagination
     var pages = [];
     if (content.page > 5) {
       pages.push({ current: false, number: 1 });
@@ -171,21 +192,27 @@
     window.scrollTo(0, 0);
   }
 
+  // perform a search
   function search() {
     var params = {
+      // retrieve maximum 50 values per facet to display the "more" link
       maxValuesPerFacet: 50
     };
+    // plug review_count slider refinement
     if (minReviewsCount > 0) {
       params.numericFilters = 'review_count>=' + minReviewsCount;
     }
+    // if we're sorting by ratings/reviews,
+    // make the typo-tolerance more strict
     if (helper.index != 'yelp_business') {
       params.minWordSizefor1Typo = 5;
       params.minWordSizefor2Typos = 9;
     }
+    // perform the query
     helper.search($q.val(), searchCallback, params);
   }
 
-  // fetch anchor params
+  // init: fetch anchor params and init the associated variables
   if (location.hash && location.hash.indexOf('#q=') === 0) {
     var params = location.hash.substring(3);
     var pageParamOffset = params.indexOf('&page=');
@@ -211,6 +238,7 @@
   $q.on('keyup change', function() {
     if ($q.val() != lastQuery) {
       lastQuery = $q.val();
+      // performing a new full-text query reset the pagination and the refinements
       minReviewsCount = 0;
       helper.setPage(0);
       helper.clearRefinements();
@@ -226,6 +254,7 @@
     $(link).closest('ul').find('.show-more').toggle();
   };
   window.toggleRefine = function(facet, value) {
+    // refinining a facet reset the pagination
     helper.setPage(0);
     helper.toggleRefine(facet, value);
   };
@@ -234,6 +263,7 @@
   };
   window.sortBy = function(order, link) {
     $(link).closest('.btn-group').find('.sort-by').text($(link).text());
+    // update targeted index
     switch (order) {
       case 'stars':
         helper.index = 'yelp_business_rating_desc';
@@ -244,7 +274,9 @@
       default:
         helper.index = 'yelp_business';
     }
+    // reset page
     helper.setPage(0);
+    // perform the query
     search();
   };
 

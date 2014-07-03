@@ -1,13 +1,16 @@
 <html>
 <head>
   <title>Instant Search Demo</title>
+  <!-- Dependencies -->
   <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="css/style.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-slider.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-checkbox.css">
+  <!-- /Dependencies -->
+  <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 
+  <!-- Header -->
   <nav class="navbar navbar-default" role="navigation">
     <div class="container">
       <div class="row">
@@ -15,10 +18,12 @@
           <a href="" class="navbar-brand">Instant-Search Demo</a>
         </div>
         <div class="col-sm-9 col-xs-12">
+          <!-- Search bar -->
           <div class="input-group input-group-lg m-t">
             <input type="text" name="q" id="q" autocomplete="off" spellcheck="false" autocorrect="false" class="form-control string" placeholder="Search by name, category or city..." />
             <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
           </div>
+          <!-- /Search bar -->
           <div class="text-right text-muted">
             Search powered by <a href="http://www.algolia.com"><img src="http://www.algolia.com/assets/algolia128x40.png" style="height: 1em; margin-right: 50px;" /></a>
           </div>
@@ -26,12 +31,18 @@
       </div>
     </div>
   </nav>
+  <!-- /Header -->
 
+  <!-- Results page -->
   <section class="container">
     <div class="row">
+      <!-- Facets -->
       <div class="col-sm-3 hidden-xs" id="facets"></div>
+      <!-- /Facets -->
+
       <div class="col-sm-9 col-xs-12">
         <div class="panel panel-default">
+          <!-- Stats + sort order menu -->
           <div class="panel-heading">
             <div class="pull-right">
               <div class="btn-group">
@@ -47,13 +58,22 @@
             </div>
             <span id="stats">&nbsp;</span>
           </div>
+          <!-- /Stats + sort order menu -->
+
+          <!-- Hits -->
           <div class="panel-body" id="hits"></div>
+          <!-- /Hits -->
         </div>
+
+        <!-- Pagination -->
         <div id="pagination"></div>
+        <!-- /Pagination -->
       </div>
     </div>
   </section>
+  <!-- /Results page -->
 
+  <!-- Facet template -->
   <script type="text/template" id="facet-template">
     <div class="facet">
       <ul class="list-group">
@@ -88,6 +108,7 @@
     </div>
   </script>
 
+  <!-- Hit template -->
   <script type="text/template" id="hit-template">
     <div class="hit media">
       <a class="pull-left" href="{{ url }}">
@@ -115,6 +136,7 @@
     </div>
   </script>
 
+  <!-- Pagination template -->
   <script type="text/template" id="pagination-template">
     <div class="text-center">
       <ul class="pagination">
@@ -127,6 +149,7 @@
     </div>
   </script>
 
+  <!-- Slider template -->
   <script type="text/template" id="slider-template">
     <div class="facet">
       <ul class="list-group">
@@ -140,6 +163,7 @@
     </div>
   </script>
 
+  <!-- Stats template -->
   <script type="text/template" id="stats-template">
     <div class="stats">
       We found <strong>{{ nbHits }}</strong> result{{#nbHits_plural}}s{{/nbHits_plural}} {{#query}}matching <strong>"{{ query }}"</strong>{{/query}} in <strong>{{ processingTimeMS }}</strong> ms
@@ -150,13 +174,14 @@
     Source Code on <a href="http://github.com/algolia/instant-search-demo">Github</a> - Data from <a href="https://www.yelp.com/academic_dataset">Yelp's Academic Dataset</a>
   </footer>
 
-  <script src="http://cdn.jsdelivr.net/json2/0.1/json2.min.js"></script>
+  <!-- Dependencies -->
   <script src="http://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
   <script src="http://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script src="http://cdn.jsdelivr.net/algoliasearch/2.5.2/algoliasearch.min.js"></script>
   <script src="http://cdn.jsdelivr.net/hogan.js/3.0.0/hogan.common.js"></script>
   <script src="js/bootstrap-slider.js"></script>
   <script src="js/bootstrap-checkbox.js"></script>
+  <!-- /Dependencies -->
   <script src="js/app.js"></script>
 </body>
 </html>

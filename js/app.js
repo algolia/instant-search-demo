@@ -162,7 +162,8 @@
         helper.toggleRefine(refine, refinements[i][refine]);
       }
     }
-    helper.gotoPage(page);
+    helper.setPage(page);
+    search();
   }
 
   // input binding

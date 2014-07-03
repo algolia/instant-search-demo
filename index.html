@@ -3,6 +3,7 @@
   <title>Instant Search Demo</title>
   <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/slider.css">
 </head>
 <body>
 
@@ -129,10 +130,10 @@
     <div class="facet">
       <ul class="list-group">
         <li class="list-group-item text-center list-group-item-info"><b>{{ title }}</b></li>
-        <li class="list-group-item">
-          {{#current}}<div class="text-center">&gt; {{ current }}</div>{{/current}}
-          <input type="range" max="{{ max }}" min="0" value="{{ current }}" step="{{ step }}" onchange="numericRefine('{{ facet }}', this); return false;" style="width: 80%" />
-          <br />
+        <li class="list-group-item text-center">
+          <b>0</b>
+          <input type="text" data-slider-min="0" data-slider-max="{{ max }}" data-slider-step="{{ step }}" data-slider-value="{{ current }}" data-slider-orientation="horizontal" id="{{ facet }}-slider" />
+          <b>{{ max }}</b>
         </li>
       </ul>
     </div>
@@ -153,6 +154,7 @@
   <script src="http://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script src="http://cdn.jsdelivr.net/algoliasearch/2.5.2/algoliasearch.min.js"></script>
   <script src="http://cdn.jsdelivr.net/hogan.js/3.0.0/hogan.common.js"></script>
+  <script src="js/bootstrap-slider.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

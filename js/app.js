@@ -94,6 +94,12 @@
     }
     $facets.html(html);
 
+    // bind slider
+    $('#review_count-slider').slider().on('slideStop', function(ev) {
+      minReviewsCount = ev.value;
+      search();
+    });
+
     // pagination
     var pages = [];
     if (content.page > 5) {
@@ -184,10 +190,6 @@
   };
   window.gotoPage = function(page) {
     helper.gotoPage(+page - 1);
-  };
-  window.numericRefine = function(facet, input) {
-    minReviewsCount = $(input).val();
-    search();
   };
   window.sortBy = function(order, link) {
     $(link).closest('.btn-group').find('.sort-by').text($(link).text());

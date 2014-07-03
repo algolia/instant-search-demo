@@ -29,20 +29,7 @@
 .stars_4_half { background-position: -3px -147px }
 .stars_5 { background-position: -3px -165px }
 
-input[type="range"] {
-  position: relative;
-  margin-left: 1em;
-}
-input[type="range"]:after, input[type="range"]:before {
-  position: absolute;
-  top: 1em;
-  color: #aaa;
-}
-input[type="range"]:before {
-  left:0em;
-  content: attr(min);
-}
-input[type="range"]:after {
-  right: 0em;
-  content: attr(max);
+.slider {
+  margin-left: 10px;
+  margin-right: 10px;
 }

@@ -181,6 +181,7 @@
 
   // input binding
   $q.on('keyup change', function() {
+    minReviewsCount = 0;
     helper.setPage(0);
     helper.clearRefinements();
     search();

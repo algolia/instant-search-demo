@@ -171,7 +171,7 @@
     helper.setPage(0);
     helper.clearRefinements();
     search();
-  }).focus();
+  }).focus().trigger('change');
 
 
   // click binding

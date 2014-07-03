@@ -3,7 +3,8 @@
   <title>Instant Search Demo</title>
   <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
-  <link rel="stylesheet" type="text/css" href="css/slider.css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-slider.css">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-checkbox.css">
 </head>
 <body>
 
@@ -60,7 +61,7 @@
         {{#values}}
           <li class="{{#refined}}refined{{/refined}} list-group-item">
             {{#disjunctive}}
-              <input type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">
+              <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">
               <a href="#" onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">{{ label }}</a> ({{ count }})
             {{/disjunctive}}
             {{^disjunctive}}
@@ -73,7 +74,7 @@
           {{#other_values}}
             <li class="{{#refined}}refined{{/refined}} show-more list-group-item" style="display: none">
               {{#disjunctive}}
-                <input type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">
+                <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">
                 <a href="#" onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">{{ label }}</a> ({{ count }})
               {{/disjunctive}}
               {{^disjunctive}}
@@ -155,6 +156,7 @@
   <script src="http://cdn.jsdelivr.net/algoliasearch/2.5.2/algoliasearch.min.js"></script>
   <script src="http://cdn.jsdelivr.net/hogan.js/3.0.0/hogan.common.js"></script>
   <script src="js/bootstrap-slider.js"></script>
+  <script src="js/bootstrap-checkbox.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

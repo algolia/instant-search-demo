@@ -4,8 +4,15 @@
   background: #ffffe5;
 }
 
-.facet .refined a {
+.list-group-item {
+  padding: 5px !important;
+}
+.list-group-item.refined {
+  background: #BBD9F4;
+}
+.list-group-item.refined a {
   font-weight: bold;
+  color: white;
 }
 
 .navbar {
@@ -36,4 +43,8 @@
 
 .slider-selection {
   background: #D9EDF7 !important;
+}
+
+input[type="checkbox"]:focus, input[type="checkbox"]:active, button[type="button"].btn-link:focus, button[type="button"].btn-link:active {
+  outline: none;
 }

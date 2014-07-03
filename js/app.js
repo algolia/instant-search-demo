@@ -107,6 +107,9 @@
       search();
     });
 
+    // pimp checkboxes
+    $('input[type="checkbox"]').checkbox();
+
     // pagination
     var pages = [];
     if (content.page > 5) {
@@ -176,17 +179,22 @@
       }
     }
     helper.setPage(page);
-    search();
   }
 
   // input binding
+  var lastQuery = $q.val();
   $q.on('keyup change', function() {
-    minReviewsCount = 0;
-    helper.setPage(0);
-    helper.clearRefinements();
-    search();
-  }).focus().trigger('change');
+    if ($q.val() != lastQuery) {
+      lastQuery = $q.val();
+      minReviewsCount = 0;
+      helper.setPage(0);
+      helper.clearRefinements();
+      search();
+    }
+  }).focus();
 
+  // load results
+  search();
 
   // click binding
   window.showMoreLess = function(link) {

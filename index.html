@@ -8,17 +8,27 @@
 
   <nav class="navbar navbar-default" role="navigation">
     <div class="container">
-      <div class="input-group input-group-lg">
-        <input type="text" name="q" id="q" autocomplete="off" spellcheck="false" autocorrect="false" class="form-control string" placeholder="Search by name, category or city..." />
-        <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
-      </div>      
+      <div class="row">
+        <div class="col-sm-3 hidden-xs">
+          <span class="navbar-brand">Demo Instant Search</span>
+        </div>
+        <div class="col-sm-9 col-xs-12">
+          <div class="input-group input-group-lg m-t">
+            <input type="text" name="q" id="q" autocomplete="off" spellcheck="false" autocorrect="false" class="form-control string" placeholder="Search by name, category or city..." />
+            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+          </div>
+          <div class="text-right text-muted">
+            Search powered by <a href="http://www.algolia.com"><img src="http://www.algolia.com/assets/algolia128x40.png" style="height: 1em; margin-right: 50px;" /></a>
+          </div>
+        </div>
+      </div>
     </div>
   </nav>
 
   <section class="container">
     <div class="row">
-      <div class="col-md-3" id="facets"></div>
-      <div class="col-md-9">
+      <div class="col-sm-3 hidden-xs" id="facets"></div>
+      <div class="col-sm-9 col-xs-12">
         <div class="panel panel-default">
           <div class="panel-heading">
             <div class="pull-right">

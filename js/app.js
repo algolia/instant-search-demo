@@ -189,5 +189,20 @@
     minReviewsCount = $(input).val();
     search();
   };
+  window.sortBy = function(order, link) {
+    $(link).closest('.btn-group').find('.sort-by').text($(link).text());
+    switch (order) {
+      case 'stars':
+        helper.index = 'yelp_business_rating_desc';
+        break;
+      case 'review_count':
+        helper.index = 'yelp_business_review_count_desc';
+        break;
+      default:
+        helper.index = 'yelp_business';
+    }
+    helper.setPage(0);
+    search();
+  };
 
 })(jQuery);

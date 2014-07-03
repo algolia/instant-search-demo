@@ -71,7 +71,7 @@
 
         if (facet === 'review_count') {
           // add a slider
-          html += $sliderTemplate.render({ facet: facet, step: 50, title: FACETS[facet].title, max: content.facets_stats[facet].max, current: minReviewsCount });
+          html += $sliderTemplate.render({ facet: facet, title: FACETS[facet].title, max: content.facets_stats[facet].max, current: minReviewsCount });
         } else {
           var values = [];
           // sort facets

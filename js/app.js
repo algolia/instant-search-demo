@@ -95,7 +95,14 @@
     $facets.html(html);
 
     // bind slider
-    $('#review_count-slider').slider().on('slideStop', function(ev) {
+    $('#review_count-slider').slider({
+      formater: function(e) {
+        if (e === 0) {
+          return 'All';
+        }
+        return '> ' + e;
+      }
+    }).on('slideStop', function(ev) {
       minReviewsCount = ev.value;
       search();
     });
@@ -145,7 +152,7 @@
       maxValuesPerFacet: 50
     };
     if (minReviewsCount > 0) {
-      params.numericFilters = 'review_count>' + minReviewsCount;
+      params.numericFilters = 'review_count>=' + minReviewsCount;
     }
     helper.search($q.val(), searchCallback, params);
   }

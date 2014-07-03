@@ -76,7 +76,15 @@
           var values = [];
           // sort facets
           for (var v in content[facetType][facet]) {
-            values.push({ label: v, count: content[facetType][facet][v], refined: helper.isRefined(facet, v) });
+            var label;
+            if (facet === 'open' && v === 'true') {
+              label = 'Open';
+            } else if (facet === 'open' && v === 'false') {
+              label = 'Closed';
+            } else {
+              label = v;
+            }
+            values.push({ label: label, value: v, count: content[facetType][facet][v], refined: helper.isRefined(facet, v) });
           }
           values.sort(FACETS[facet].sortFunction);
 

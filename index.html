@@ -1,0 +1,129 @@
+<html>
+<head>
+  <title>Instant Search Demo</title>
+  <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+      <div class="input-group input-group-lg">
+        <input type="text" name="q" id="q" autocomplete="off" spellcheck="false" autocorrect="false" class="form-control string" placeholder="Search by name, category or city..." />
+        <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+      </div>      
+    </div>
+  </nav>
+
+  <section class="container">
+    <div class="row">
+      <div class="col-md-3" id="facets"></div>
+      <div class="col-md-9">
+        <div class="panel panel-default">
+          <div class="panel-heading" id="stats"></div>
+          <div class="panel-body" id="hits"></div>
+        </div>
+        <div id="pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <script type="text/template" id="facet-template">
+    <div class="facet">
+      <ul class="list-group">
+        <li class="list-group-item text-center list-group-item-info"><b>{{ title }}</b></li>
+        {{#values}}
+          <li class="{{#refined}}refined{{/refined}} list-group-item">
+            {{#disjunctive}}
+              <input type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">
+              <a href="#" onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">{{ label }}</a> ({{ count }})
+            {{/disjunctive}}
+            {{^disjunctive}}
+              <a href="#" onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">{{ label }}</a> ({{ count }})
+            {{/disjunctive}}
+          </li>
+        {{/values}}
+        {{#has_other_values}}
+          <li class="show-more list-group-item"><a href="#" onclick="showMoreLess(this); return false;"><i class="glyphicon glyphicon-chevron-down" /> more</a></li>
+          {{#other_values}}
+            <li class="{{#refined}}refined{{/refined}} show-more list-group-item" style="display: none">
+              {{#disjunctive}}
+                <input type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">
+                <a href="#" onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">{{ label }}</a> ({{ count }})
+              {{/disjunctive}}
+              {{^disjunctive}}
+                <a href="#" onclick="toggleRefine('{{ facet }}', '{{ label }}'); return false;">{{ label }}</a> ({{ count }})
+              {{/disjunctive}}
+            </li>
+           {{/other_values}}
+          <li class="show-more list-group-item" style="display: none" onclick="showMoreLess(this); return false;"><a href=""><i class="glyphicon glyphicon-chevron-up" /> less</a></li>
+        {{/has_other_values}}
+      </ul>
+    </div>
+  </script>
+
+  <script type="text/template" id="hit-template">
+    <div class="hit media">
+      <a class="pull-left" href="{{ url }}">
+        <img class="media-object" src="{{ photo_url }}" alt="{{ name }}">
+      </a>
+      <div class="media-body">
+        <div class="pull-right text-right">
+          <i class="star-img {{ star_image }}" />
+          {{ review_count }} review
+        </div>
+        <h4>
+          {{{ _highlightResult.name.value }}}
+          <small>{{{ _highlightResult.city.value }}}</small>
+        </h4>
+        <p class="text-muted">
+          <i class="glyphicon glyphicon-map-marker" />
+          {{{ full_address }}}
+        </p>
+        <ul class="list-inline">
+          {{#_highlightResult.categories}}
+            <li>{{{ value }}}</li>
+          {{/_highlightResult.categories}}
+        </ul>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="pagination-template">
+    <div class="text-center">
+      <ul class="pagination">
+        <li {{^prev_page}}class="disabled"{{/prev_page}}><a href="#" onclick="{{#prev_page}}gotoPage({{ prev_page }});{{/prev_page}} return false;">&laquo;</a></li>
+        {{#pages}}
+          <li class="{{#current}}active{{/current}}{{#disabled}}disabled{{/disabled}}"><a href="#" onclick="{{^disabled}}gotoPage({{ number }});{{/disabled}} return false;">{{ number }}</a></li>
+        {{/pages}}
+        <li {{^next_page}}class="disabled"{{/next_page}}><a href="#" onclick="{{#next_page}}gotoPage({{ next_page }});{{/next_page}} return false;">&raquo;</a></li>
+      </ul>
+    </div>
+  </script>
+
+  <script type="text/template" id="slider-template">
+    <div class="facet">
+      <ul class="list-group">
+        <li class="list-group-item text-center list-group-item-info"><b>{{ title }}</b></li>
+        <li class="list-group-item">
+          {{#current}}<div class="text-center">&gt; {{ current }}</div>{{/current}}
+          <input type="range" max="{{ max }}" min="0" value="{{ current }}" step="{{ step }}" onchange="numericRefine('{{ facet }}', this); return false;" style="width: 80%" />
+          <br />
+        </li>
+      </ul>
+    </div>
+  </script>
+
+  <script type="text/template" id="stats-template">
+    <div class="stats">
+      We found <strong>{{ nbHits }}</strong> result{{#nbHits_plural}}s{{/nbHits_plural}} {{#query}}matching <strong>"{{ query }}"</strong>{{/query}} in <strong>{{ processingTimeMS }}</strong> ms
+    </div>
+  </script>
+
+  <script src="http://cdn.jsdelivr.net/json2/0.1/json2.min.js"></script>
+  <script src="http://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://cdn.jsdelivr.net/algoliasearch/2.5.2/algoliasearch.min.js"></script>
+  <script src="http://cdn.jsdelivr.net/hogan.js/3.0.0/hogan.common.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+.hit em {
+  font-style: normal;
+  font-weight: bold;
+  background: #ffffe5;
+}
+
+.facet .refined a {
+  font-weight: bold;
+}
+
+.star-img {
+  display: block;
+  width: 84px;
+  height: 15px;
+  background: url(http://s3-media3.ak.yelpcdn.com/assets/2/www/img/c2252a4cd43e/ico/stars/v2/stars_map.png) no-repeat;
+}
+
+.stars_0 {
+  background-position: -3px -3px
+}
+
+.stars_1 {
+  background-position: -3px -21px
+}
+
+.stars_1_half {
+  background-position: -3px -39px
+}
+
+.stars_2 {
+  background-position: -3px -57px
+}
+
+.stars_2_half {
+  background-position: -3px -75px
+}
+
+.stars_3 {
+  background-position: -3px -93px
+}
+
+.stars_3_half {
+  background-position: -3px -111px
+}
+
+.stars_4 {
+  background-position: -3px -129px
+}
+
+.stars_4_half {
+  background-position: -3px -147px
+}
+
+.stars_5 {
+  background-position: -3px -165px
+}
+
+input[type="range"] {
+  position: relative;
+  margin-left: 1em;
+}
+input[type="range"]:after, input[type="range"]:before {
+  position: absolute;
+  top: 1em;
+  color: #aaa;
+}
+input[type="range"]:before {
+  left:0em;
+  content: attr(min);
+}
+input[type="range"]:after {
+  right: 0em;
+  content: attr(max);
+}

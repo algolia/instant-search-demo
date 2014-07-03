@@ -164,6 +164,9 @@
       }
     }
     location.replace('#q=' + encodeURIComponent(content.query) + '&page=' + content.page + '&minReviewsCount=' + minReviewsCount + '&refinements=' + JSON.stringify(refinements));
+
+    // scroll on top
+    window.scrollTo(0, 0);
   }
 
   function search() {

@@ -57,6 +57,8 @@
       if (hit.stars > 0 && parseInt(hit.stars) != hit.stars) {
         hit.star_image += '_half';
       }
+      // reviews
+      hit.review_count_plural = hit.review_count != 1;
 
       // hit rendering
       html += $hitTemplate.render(hit);

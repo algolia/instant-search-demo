@@ -96,7 +96,7 @@
       <div class="media-body">
         <div class="pull-right text-right">
           <i class="star-img {{ star_image }}" />
-          {{ review_count }} review
+          {{ review_count }} review{{#review_count_plural}}s{{/review_count_plural}}
         </div>
         <h4>
           {{{ _highlightResult.name.value }}}

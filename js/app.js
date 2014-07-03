@@ -3,7 +3,7 @@
   var algolia = new AlgoliaSearch('sylvain', 'd962ad6512680f755df047e03a6af6fd');
   var helper = new AlgoliaSearchHelper(algolia, 'yelp_business', {
     facets: ['city', 'open', 'review_count'],
-    disjunctiveFacets: ['stars', 'review_count_range', 'categories'],
+    disjunctiveFacets: ['review_count_range', 'categories', 'stars'],
     hitsPerPage: 10
   });
 
@@ -31,8 +31,8 @@
   var FACETS = {
     'city': { title: 'City', sortFunction: sortByCountDesc },
     'open': { title: 'Open', sortFunction: sortByCountDesc },
-    'review_count': { title: 'Reviews (slider)' },
-    'review_count_range': { title: 'Reviews', sortFunction: sortByNumAsc },
+    'review_count': { title: '# Reviews (slider)' },
+    'review_count_range': { title: '# Reviews (range)', sortFunction: sortByNumAsc },
     'stars': { title: 'Rating', sortFunction: sortByNumAsc },
     'categories': { title: 'Categories', sortFunction: sortByCountDesc }
   };

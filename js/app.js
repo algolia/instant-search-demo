@@ -165,6 +165,10 @@
     if (minReviewsCount > 0) {
       params.numericFilters = 'review_count>=' + minReviewsCount;
     }
+    if (helper.index != 'yelp_business') {
+      params.minWordSizefor1Typo = 5;
+      params.minWordSizefor2Typos = 9;
+    }
     helper.search($q.val(), searchCallback, params);
   }
 

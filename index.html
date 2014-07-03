@@ -77,31 +77,34 @@
   <script type="text/template" id="facet-template">
     <div class="facet">
       <ul class="list-group">
+        <!-- facet title -->
         <li class="list-group-item text-center list-group-item-info"><b>{{ title }}</b></li>
+
         {{#values}}
           <li class="{{#refined}}refined{{/refined}} list-group-item">
             {{#disjunctive}}
               <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">
-              <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
             {{/disjunctive}}
-            {{^disjunctive}}
-              <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
-            {{/disjunctive}}
+            <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
           </li>
         {{/values}}
+
+        <!-- other values will only be displayed if the use click on the "show more" link  -->
         {{#has_other_values}}
+          <!-- "show more" link -->
           <li class="show-more list-group-item"><a href="#" onclick="showMoreLess(this); return false;"><i class="glyphicon glyphicon-chevron-down" /> more</a></li>
+
+          <!-- other values -->
           {{#other_values}}
             <li class="{{#refined}}refined{{/refined}} show-more list-group-item" style="display: none">
               {{#disjunctive}}
                 <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">
-                <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
               {{/disjunctive}}
-              {{^disjunctive}}
-                <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
-              {{/disjunctive}}
+              <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
             </li>
-           {{/other_values}}
+          {{/other_values}}
+
+          <!-- "show less" link -->
           <li class="show-more list-group-item" style="display: none" onclick="showMoreLess(this); return false;"><a href=""><i class="glyphicon glyphicon-chevron-up" /> less</a></li>
         {{/has_other_values}}
       </ul>

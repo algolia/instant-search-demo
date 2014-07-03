@@ -86,7 +86,15 @@
             }
             values.push({ label: label, value: v, count: content[facetType][facet][v], refined: helper.isRefined(facet, v) });
           }
-          values.sort(FACETS[facet].sortFunction);
+          values.sort(function(a, b) {
+            // sort by the refined states first (put them on top if they are refined)
+            if (a.refined != b.refined) {
+              if (a.refined) return -1;
+              if (b.refined) return 1;
+            }
+            // then fallback on the standard sort function
+            return FACETS[facet].sortFunction(a,b);
+          });
 
           // facet rendering
           html += $facetTemplate.render({

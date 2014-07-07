@@ -1,7 +1,7 @@
 (function($) {
 
   // Client initialization
-  var algolia = new AlgoliaSearch('sylvain', 'd962ad6512680f755df047e03a6af6fd');
+  var algolia = new AlgoliaSearch('latency', '6be0576ff61c053d5f9a3225e2a90f76'); // replace by your own ApplicationID and SearchableOnlyAPIKey
 
   // Helper initialization
   var helper = new AlgoliaSearchHelper(algolia, 'yelp_business', {
@@ -95,18 +95,7 @@
           // collect all values from `content[facetType][facet]` to sort them by FACETS[facet].sortFunction
           var values = [];
           for (var v in content[facetType][facet]) {
-            var label;
-
-            // for the boolean-based 'open' facet, use smarter naming for the label
-            if (facet === 'open' && v === 'true') {
-              label = 'Open';
-            } else if (facet === 'open' && v === 'false') {
-              label = 'Closed';
-            } else {
-              label = v;
-            }
-
-            values.push({ label: label, value: v, count: content[facetType][facet][v], refined: helper.isRefined(facet, v) });
+            values.push({ label: v, value: v, count: content[facetType][facet][v], refined: helper.isRefined(facet, v) });
           }
           // sort the values
           values.sort(function(a, b) {

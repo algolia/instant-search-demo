@@ -1,10 +1,10 @@
 (function($) {
-
   // Client initialization
   var algolia = new AlgoliaSearch('latency', '6be0576ff61c053d5f9a3225e2a90f76'); // replace by your own ApplicationID and SearchableOnlyAPIKey
+  var index = 'yelp_business'; // replace by your own index name
 
   // Helper initialization
-  var helper = new AlgoliaSearchHelper(algolia, 'yelp_business', {
+  var helper = new AlgoliaSearchHelper(algolia, index, {
     // list of conjunctive facets (link to refine)
     facets: ['categories', 'open', 'review_count'],
 
@@ -255,13 +255,13 @@
     // update targeted index
     switch (order) {
       case 'stars':
-        helper.index = 'yelp_business_rating_desc';
+        helper.index = index + '_rating_desc';
         break;
       case 'review_count':
-        helper.index = 'yelp_business_review_count_desc';
+        helper.index = index + '_review_count_desc';
         break;
       default:
-        helper.index = 'yelp_business';
+        helper.index = index;
     }
     // reset page
     helper.setPage(0);

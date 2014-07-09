@@ -1,9 +1,21 @@
 (function($) {
   // Client initialization
   var algolia = new AlgoliaSearch('latency', '6be0576ff61c053d5f9a3225e2a90f76'); // replace by your own ApplicationID and SearchableOnlyAPIKey
-  var index = 'yelp_business'; // replace by your own index name
+
+  // DOM binding
+  var $hits = $('#hits');
+  var $pagination = $('#pagination');
+  var $stats = $('#stats');
+  var $q = $('#q');
+  var $hitTemplate = Hogan.compile($('#hit-template').text());
+  var $statsTemplate = Hogan.compile($('#stats-template').text());
+  var $paginationTemplate = Hogan.compile($('#pagination-template').text());
+  var $facets = $('#facets');
+  var $facetTemplate = Hogan.compile($('#facet-template').text());
+  var $sliderTemplate = Hogan.compile($('#slider-template').text());
 
   // Helper initialization
+  var index = 'yelp_business'; // replace by your own index name
   var helper = new AlgoliaSearchHelper(algolia, index, {
     // list of conjunctive facets (link to refine)
     facets: ['categories', 'open', 'review_count'],
@@ -14,18 +26,6 @@
     // number of results per page
     hitsPerPage: 10
   });
-
-  // DOM binding
-  var $hits = $('#hits');
-  var $pagination = $('#pagination');
-  var $stats = $('#stats');
-  var $facets = $('#facets');
-  var $q = $('#q');
-  var $hitTemplate = Hogan.compile($('#hit-template').text());
-  var $facetTemplate = Hogan.compile($('#facet-template').text());
-  var $paginationTemplate = Hogan.compile($('#pagination-template').text());
-  var $sliderTemplate = Hogan.compile($('#slider-template').text());
-  var $statsTemplate = Hogan.compile($('#stats-template').text());
 
   // Helpers
   Number.prototype.numberWithDelimiter = function(delimiter) {

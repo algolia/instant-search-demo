@@ -164,7 +164,7 @@
         }
       }
     }
-    location.replace('#q=' + encodeURIComponent(content.query) + '&page=' + content.page + '&minReviewsCount=' + minReviewsCount + '&refinements=' + JSON.stringify(refinements));
+    location.replace('#q=' + encodeURIComponent(content.query) + '&page=' + content.page + '&minReviewsCount=' + minReviewsCount + '&refinements=' + encodeURIComponent(JSON.stringify(refinements)));
 
     // scroll on top
     window.scrollTo(0, 0);
@@ -200,7 +200,7 @@
     var q = decodeURIComponent(params.substring(0, pageParamOffset));
     var page = parseInt(params.substring(pageParamOffset + 6, minReviewsCountParamOffset));
     minReviewsCount = parseInt(params.substring(minReviewsCountParamOffset + 17, refinementsParamOffset));
-    var refinements = JSON.parse(params.substring(refinementsParamOffset + 13));
+    var refinements = decodeURIComponent(JSON.parse(params.substring(refinementsParamOffset + 13)));
 
     $q.val(q);
     for (var i = 0; i < refinements.length; ++i) {

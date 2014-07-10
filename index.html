@@ -50,9 +50,9 @@
                   <span class="sort-by">Sort by Relevance</span> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                  <li><a href="#" onclick="sortBy('relevance', this); return false;">Sort by Relevance</a></li>
-                  <li><a href="#" onclick="sortBy('stars', this); return false;">Sort by Highest Stars</a></li>
-                  <li><a href="#" onclick="sortBy('review_count', this); return false;">Sort by Highest Review Count</a></li>
+                  <li><a href="#" onclick="sortBy('', this); return false;">Sort by Relevance</a></li>
+                  <li><a href="#" onclick="sortBy('_price_asc', this); return false;">Lowest Price</a></li>
+                  <li><a href="#" onclick="sortBy('_price_desc', this); return false;">Highest Price</a></li>
                 </ul>
               </div>
             </div>
@@ -115,25 +115,20 @@
   <script type="text/template" id="hit-template">
     <div class="hit media">
       <a class="pull-left" href="{{ url }}">
-        <img class="media-object" src="{{ photo_url }}" alt="{{ name }}">
+        <img class="media-object" src="{{ image }}" alt="{{ name }}">
       </a>
       <div class="media-body">
-        <div class="pull-right text-right">
-          <i class="star-img {{ star_image }}" />
-          {{ review_count }} review{{#review_count_plural}}s{{/review_count_plural}}
-        </div>
-        <h4>
-          {{{ _highlightResult.name.value }}}
-          <small>{{{ _highlightResult.city.value }}}</small>
-        </h4>
+        <h3 class="pull-right text-right text-danger">
+          ${{ salePrice }}
+        </h3>
+        <h4>{{{ _highlightResult.name.value }}}</h4>
         <p class="text-muted">
-          <i class="glyphicon glyphicon-map-marker" />
-          {{{ full_address }}}
+          {{{ _highlightResult.shortDescription.value }}}
         </p>
         <ul class="list-inline">
-          {{#_highlightResult.categories}}
-            <li>{{{ value }}}</li>
-          {{/_highlightResult.categories}}
+          <li>{{{ _highlightResult.manufacturer.value }}}</li>
+          <li>{{{ _highlightResult.category.value }}}</li>
+          <li>{{{ _highlightResult.type.value }}}</li>
         </ul>
       </div>
     </div>
@@ -174,7 +169,7 @@
   </script>
 
   <footer class="container text-muted text-center well">
-    Source Code on <a href="http://github.com/algolia/instant-search-demo">Github</a> - Data from <a href="https://www.yelp.com/academic_dataset">Yelp's Academic Dataset</a>
+    Source Code on <a href="http://github.com/algolia/instant-search-demo">Github</a> - Data from <a href="https://developer.bestbuy.com"><img src="https://developer.bestbuy.com/images/bestbuy-logo.png" alt="Best Buy Developer"></a>
   </footer>
 
   <!-- Dependencies -->

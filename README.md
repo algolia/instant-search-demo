@@ -13,11 +13,10 @@ This is a sample project implementing an instant-search based e-commerce website
  * Typo-tolerance
  * Multiple sort orders
    * By Relevance
-   * By Highest Ratings
-   * By Highest Review Count
+   * By Highest Price
+   * By Lowest Price
  * Backup search parameters in the URL
 
 Data Set
 ---------
-We've extracted about 13,500 businesses from [Yelp's Academic Dataset](http://www.yelp.com/academic_dataset). You can find it [here](https://github.com/algolia/instant-search-demo/raw/master/data.json).
-
+We've extracted 10,000 products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).

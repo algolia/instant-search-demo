@@ -15,13 +15,13 @@
   var $sliderTemplate = Hogan.compile($('#slider-template').text());
 
   // Helper initialization
-  var index = 'yelp_business'; // replace by your own index name
+  var index = 'bestbuy'; // replace by your own index name
   var helper = new AlgoliaSearchHelper(algolia, index, {
     // list of conjunctive facets (link to refine)
-    facets: ['categories', 'open', 'review_count'],
+    facets: ['type', 'shipping', 'customerReviewCount'],
 
     // list of disjunctive facets (checkbox to refine)
-    disjunctiveFacets: ['review_count_range', 'stars', 'city'],
+    disjunctiveFacets: ['category', 'salePrice_range', 'manufacturer'],
 
     // number of results per page
     hitsPerPage: 10
@@ -39,12 +39,12 @@
   function sortByCountDesc(a, b) { return b.count - a.count; }
   function sortByNumAsc(a, b) { return parseInt(a.label) - parseInt(b.label); }
   var FACETS = {
-    'city': { title: 'City', sortFunction: sortByCountDesc },
-    'open': { title: 'Open', sortFunction: sortByCountDesc },
-    'review_count': { title: '# Reviews (slider)' },
-    'review_count_range': { title: '# Reviews (range)', sortFunction: sortByNumAsc },
-    'stars': { title: 'Rating', sortFunction: sortByNumAsc },
-    'categories': { title: 'Categories', sortFunction: sortByCountDesc }
+    'type': { title: 'Type', sortFunction: sortByCountDesc },
+    'shipping': { title: 'Shipping', sortFunction: sortByCountDesc },
+    'customerReviewCount': { title: '# Reviews' },
+    'salePrice_range': { title: 'Price', sortFunction: sortByNumAsc },
+    'manufacturer': { title: 'Manufacturer', sortFunction: sortByNumAsc },
+    'category': { title: 'Categories', sortFunction: sortByCountDesc }
   };
   var refinements = {};
   var minReviewsCount = 0;
@@ -63,18 +63,7 @@
     // hits: display the `hitsPerPage` results
     var html = '';
     for (var i = 0; i < content.hits.length; ++i) {
-      var hit = content.hits[i];
-
-      // stars
-      hit.star_image = 'stars_' + parseInt(hit.stars);
-      if (hit.stars > 0 && parseInt(hit.stars) != hit.stars) {
-        hit.star_image += '_half';
-      }
-      // reviews
-      hit.review_count_plural = hit.review_count != 1;
-
-      // hit rendering
-      html += $hitTemplate.render(hit);
+      html += $hitTemplate.render(content.hits[i]);
     }
     $hits.html(html);
 
@@ -86,9 +75,9 @@
       var facetType = (['facets', 'disjunctiveFacets'])[j];
 
       for (var facet in content[facetType]) {
-        if (facet === 'review_count') {
-          // add a slider fetching the 'max' value of 'review_count' from `content.facets_stats.review_count`
-          html += $sliderTemplate.render({ facet: facet, title: FACETS.review_count.title, max: content.facets_stats.review_count.max, current: minReviewsCount });
+        if (facet === 'customerReviewCount') {
+          // add a slider fetching the 'max' value of 'customerReviewCount' from `content.facets_stats.customerReviewCount`
+          html += $sliderTemplate.render({ facet: facet, title: FACETS.customerReviewCount.title, max: content.facets_stats.customerReviewCount.max, current: minReviewsCount });
         } else {
           // other facets
 
@@ -123,7 +112,7 @@
     $facets.html(html);
 
     // bind slider
-    $('#review_count-slider').slider({
+    $('#customerReviewCount-slider').slider({
       formater: function(e) {
         if (e === 0) {
           return 'All';
@@ -189,11 +178,11 @@
     };
     // plug review_count slider refinement
     if (minReviewsCount > 0) {
-      params.numericFilters = 'review_count>=' + minReviewsCount;
+      params.numericFilters = 'customerReviewCount>=' + minReviewsCount;
     }
-    // if we're sorting by ratings/reviews,
+    // if we're sorting by something,
     // make the typo-tolerance more strict
-    if (helper.index != 'yelp_business') {
+    if (helper.index != index) {
       params.minWordSizefor1Typo = 5;
       params.minWordSizefor2Typos = 9;
     }
@@ -250,19 +239,10 @@
   window.gotoPage = function(page) {
     helper.gotoPage(+page - 1);
   };
-  window.sortBy = function(order, link) {
+  window.sortBy = function(index_suffic, link) {
     $(link).closest('.btn-group').find('.sort-by').text($(link).text());
-    // update targeted index
-    switch (order) {
-      case 'stars':
-        helper.index = index + '_rating_desc';
-        break;
-      case 'review_count':
-        helper.index = index + '_review_count_desc';
-        break;
-      default:
-        helper.index = index;
-    }
+    // set target index name
+    helper.index = index + index_suffic;
     // reset page
     helper.setPage(0);
     // perform the query

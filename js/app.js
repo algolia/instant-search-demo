@@ -200,7 +200,7 @@
     var q = decodeURIComponent(params.substring(0, pageParamOffset));
     var page = parseInt(params.substring(pageParamOffset + 6, minReviewsCountParamOffset));
     minReviewsCount = parseInt(params.substring(minReviewsCountParamOffset + 17, refinementsParamOffset));
-    var refinements = decodeURIComponent(JSON.parse(params.substring(refinementsParamOffset + 13)));
+    var refinements = JSON.parse(decodeURIComponent(params.substring(refinementsParamOffset + 13)));
 
     $q.val(q);
     for (var i = 0; i < refinements.length; ++i) {

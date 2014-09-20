@@ -183,8 +183,8 @@
     // if we're sorting by something,
     // make the typo-tolerance more strict
     if (helper.index != index) {
-      params.minWordSizefor1Typo = 5;
-      params.minWordSizefor2Typos = 9;
+      // disable if not the "default" index (sort by price, etc...)
+      params.typoTolerance = false;
     }
     // perform the query
     helper.search($q.val(), searchCallback, params);

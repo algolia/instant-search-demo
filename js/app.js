@@ -43,9 +43,9 @@
     { name: 'type', title: 'Type', sortFunction: sortByCountDesc },
     { name: 'shipping', title: 'Shipping', sortFunction: sortByCountDesc },
     { name: 'customerReviewCount', title: '# Reviews' },
-    { name: 'category', title: 'Categories', sortFunction: sortByCountDesc, topListIfSelected: true },
+    { name: 'category', title: 'Categories', sortFunction: sortByCountDesc, topListIfRefined: true },
     { name: 'salePrice_range', title: 'Price', sortFunction: sortByNumAsc },
-    { name: 'manufacturer', title: 'Manufacturer', sortFunction: sortByNumAsc, topListIfSelected: true }
+    { name: 'manufacturer', title: 'Manufacturer', sortFunction: sortByNumAsc, topListIfRefined: true }
   ];
   var refinements = {};
   var minReviewsCount = 0;
@@ -94,8 +94,8 @@
           }
           // sort the values
           values.sort(function(a, b) {
-            // If topListIfSelected === true: sort by the refined states first (put them on top if they are refined).
-            if (facetConfig.topListIfSelected) {
+            // If topListIfRefined === true: sort by the refined states first (put them on top if they are refined).
+            if (facetConfig.topListIfRefined) {
               if (a.refined !== b.refined) {
                 if (a.refined) return -1;
                 if (b.refined) return 1;

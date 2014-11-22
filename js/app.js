@@ -35,7 +35,7 @@
     return split.join('.');
   };
 
-  // Facets ordered by order of display: here type will be display first and manufacture at the end
+  // Facets ordered by order of display: here type will be displayed first and manufacture at the end
   // Also includes the refinements initialization & configuration
   function sortByCountDesc(a, b) { return b.count - a.count; }
   function sortByNumAsc(a, b) { return parseInt(a.label) - parseInt(b.label); }

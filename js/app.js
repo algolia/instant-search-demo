@@ -35,23 +35,24 @@
     return split.join('.');
   };
 
-  // Facets + refinements initialization & configuration
+  // Facets ordered by order of display: here type will be display first and manufacture at the end
+  // Also includes the refinements initialization & configuration
   function sortByCountDesc(a, b) { return b.count - a.count; }
   function sortByNumAsc(a, b) { return parseInt(a.label) - parseInt(b.label); }
-  var FACETS = {
-    'type': { title: 'Type', sortFunction: sortByCountDesc },
-    'shipping': { title: 'Shipping', sortFunction: sortByCountDesc },
-    'customerReviewCount': { title: '# Reviews' },
-    'salePrice_range': { title: 'Price', sortFunction: sortByNumAsc },
-    'manufacturer': { title: 'Manufacturer', sortFunction: sortByNumAsc },
-    'category': { title: 'Categories', sortFunction: sortByCountDesc }
-  };
+  var FACETS = [
+    { name: 'type', title: 'Type', sortFunction: sortByCountDesc },
+    { name: 'shipping', title: 'Shipping', sortFunction: sortByCountDesc },
+    { name: 'customerReviewCount', title: '# Reviews' },
+    { name: 'category', title: 'Categories', sortFunction: sortByCountDesc, topListIfSelected: true },
+    { name: 'salePrice_range', title: 'Price', sortFunction: sortByNumAsc },
+    { name: 'manufacturer', title: 'Manufacturer', sortFunction: sortByNumAsc, topListIfSelected: true }
+  ];
   var refinements = {};
   var minReviewsCount = 0;
 
   // Callback called on each keystroke, rendering the results
   function searchCallback(success, content) {
-    if (!success || content.query != $q.val()) {
+    if (!success || content.query !== $q.val()) {
       // do not consider the result if there is an error
       // or if it is outdated -> query != $q.val()
       return;
@@ -69,44 +70,53 @@
 
     // facets: display the conjunctive+disjunctive facets
     html = '';
-    for (var j = 0; j < 2; ++j) {
+    var facetResult = null;
+    var facetConfig = null;
+    var isDisjunctive = null; 
 
-      // the AlgoliaSearchHelper creates an extra 'disjunctiveFacets' attribute
-      var facetType = (['facets', 'disjunctiveFacets'])[j];
+    for (var j=0; j<FACETS.length; ++j) {
+      facetConfig = FACETS[j];
+      facetResult = content['facets'][facetConfig.name] || content['disjunctiveFacets'][facetConfig.name] || null;
+      isDisjunctive = (content['disjunctiveFacets'][facetConfig.name]) ? true : false;
 
-      for (var facet in content[facetType]) {
-        if (facet === 'customerReviewCount') {
+      if (facetResult) {
+        
+        if (facetConfig.name === 'customerReviewCount') {
           // add a slider fetching the 'max' value of 'customerReviewCount' from `content.facets_stats.customerReviewCount`
-          html += $sliderTemplate.render({ facet: facet, title: FACETS.customerReviewCount.title, max: content.facets_stats.customerReviewCount.max, current: minReviewsCount });
+          html += $sliderTemplate.render({ facet: facetConfig.name, title: facetConfig.title, max: content.facets_stats.customerReviewCount.max, current: minReviewsCount });
         } else {
           // other facets
 
-          // collect all values from `content[facetType][facet]` to sort them by FACETS[facet].sortFunction
+          // collect all values from `facetResult` to sort them by facetConfig.sortFunction
           var values = [];
-          for (var v in content[facetType][facet]) {
-            values.push({ label: v, value: v, count: content[facetType][facet][v], refined: helper.isRefined(facet, v) });
+          for (var v in facetResult) {
+            values.push({ label: v, value: v, count: facetResult[v], refined: helper.isRefined(facetConfig.name, v) });
           }
           // sort the values
           values.sort(function(a, b) {
-            // sort by the refined states first (put them on top if they are refined)
-            if (a.refined != b.refined) {
-              if (a.refined) return -1;
-              if (b.refined) return 1;
+            // If topListIfSelected === true: sort by the refined states first (put them on top if they are refined).
+            if (facetConfig.topListIfSelected) {
+              if (a.refined !== b.refined) {
+                if (a.refined) return -1;
+                if (b.refined) return 1;
+              }
             }
+
             // then fallback on the standard sort function
-            return FACETS[facet].sortFunction(a,b);
+            return facetConfig.sortFunction(a,b);
           });
 
           // render the facet
           html += $facetTemplate.render({
-            facet: facet,
-            title: FACETS[facet].title,
+            facet: facetConfig.name,
+            title: facetConfig.title,
             values: values.slice(0, 10),
             has_other_values: values.length > 10,
             other_values: values.slice(10),
-            disjunctive: facetType === 'disjunctiveFacets'
+            disjunctive: isDisjunctive
           });
         }
+      
       }
     }
     $facets.html(html);

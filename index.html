@@ -14,10 +14,10 @@
   <nav class="navbar navbar-default" role="navigation">
     <div class="container">
       <div class="row">
-        <div class="col-sm-3 hidden-xs">
+        <div class="col-sm-4 hidden-xs">
           <a href="" class="navbar-brand">Instant-Search Demo</a>
         </div>
-        <div class="col-sm-9 col-xs-12">
+        <div class="col-sm-8 col-xs-12">
           <!-- Search bar -->
           <div class="input-group input-group-lg m-t">
             <input type="text" name="q" id="q" autocomplete="off" spellcheck="false" autocorrect="false" class="form-control string" placeholder="Search by name, brand, description..." />
@@ -37,10 +37,10 @@
   <section class="container">
     <div class="row">
       <!-- Facets -->
-      <div class="col-sm-3 hidden-xs" id="facets"></div>
+      <div class="col-sm-4 hidden-xs" id="facets"></div>
       <!-- /Facets -->
 
-      <div class="col-sm-9 col-xs-12">
+      <div class="col-sm-8 col-xs-12">
         <div class="panel panel-default">
           <!-- Stats + sort order menu -->
           <div class="panel-heading">
@@ -75,17 +75,27 @@
 
   <!-- Facet template -->
   <script type="text/template" id="facet-template">
-    <div class="facet">
+    <div class="facet {{facet}}-container {{#has_autocomplete}}has-autocomplete{{/has_autocomplete}}">
       <ul class="list-group">
         <!-- facet title -->
         <li class="list-group-item text-center list-group-item-info"><b>{{ title }}</b></li>
 
         {{#values}}
           <li class="{{#refined}}refined{{/refined}} list-group-item">
-            {{#disjunctive}}
-              <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">
-            {{/disjunctive}}
-            <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
+            <div class="list-group-item-container">
+              {{#disjunctive}}
+                <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">
+              {{/disjunctive}}
+              <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
+            </div>
+            {{#onoffswitch}}
+            <div class="list-item-onoffswitch-container">
+              <div class="onoffswitch is-on">
+                <a class"on " href="#" onclick="toggleExcludeRefine('{{ facet }}', '{{ value }}'); return false;"><span class="label label-success">On</span></a>
+                <a class"off " href="#" onclick="toggleExcludeRefine('{{ facet }}', '{{ value }}'); return false;"><span class="label label-danger">Off</span></a>
+              </div>
+            </div>
+            {{/onoffswitch}}
           </li>
         {{/values}}
 
@@ -107,6 +117,45 @@
           <!-- "show less" link -->
           <li class="show-more list-group-item" style="display: none" onclick="showMoreLess(this); return false;"><a href=""><i class="glyphicon glyphicon-chevron-up" /> less</a></li>
         {{/has_other_values}}
+
+        {{#has_autocomplete}}
+          <li class="autocomplete list-group-item">
+            <input class="typeahead form-control string" type="text" placeholder="Search for {{title}}" id="typeahead-facet-{{facet}}" data-autocomplete-source="{{facet}}" autocomplete="off"  spellcheck="false"/>
+          </li>
+        {{/has_autocomplete}}
+      </ul>
+    </div>
+  </script>
+
+  <!-- Facet template -->
+  <script type="text/template" id="facet-with-autocomplete-template">
+    <div class="facet {{facet}}-container has-autocomplete">
+      <ul class="list-group">
+        <!-- facet title -->
+        <li class="list-group-item text-center list-group-item-info"><b>{{ title }}</b></li>
+
+        {{#values}}
+          <li class="{{#refined}}refined{{/refined}} list-group-item">
+            <div class="list-group-item-container">
+              {{#disjunctive}}
+                <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">
+              {{/disjunctive}}
+              <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
+            </div>
+            {{#onoffswitch}}
+            <div class="list-item-onoffswitch-container">
+              <div class="onoffswitch is-on">
+                <a class"on " href="#" onclick="toggleExcludeRefine('{{ facet }}', '{{ value }}'); return false;"><span class="label label-success">On</span></a>
+                <a class"off " href="#" onclick="toggleExcludeRefine('{{ facet }}', '{{ value }}'); return false;"><span class="label label-danger">Off</span></a>
+              </div>
+            </div>
+            {{/onoffswitch}}
+          </li>
+        {{/values}}
+
+        <li class="autocomplete list-group-item">
+          <input class="typeahead form-control string" type="text" placeholder="Search for {{title}}" id="typeahead-facet-{{facet}}" data-autocomplete-source="{{facet}}" autocomplete="off"  spellcheck="false"/>
+        </li>
       </ul>
     </div>
   </script>
@@ -177,6 +226,8 @@
   <script src="//cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
   <script src="//cdn.jsdelivr.net/algoliasearch/2.8.0/algoliasearch.min.js"></script>
   <script src="//cdn.jsdelivr.net/hogan.js/3.0.0/hogan.common.js"></script>
+  <script src="//cdn.rawgit.com/twitter/typeahead.js/master/dist/typeahead.jquery.min.js"></script>
+  <script src="//cdn.rawgit.com/twitter/typeahead.js/master/dist/bloodhound.min.js"></script>
   <script src="js/bootstrap-slider.js"></script>
   <script src="js/bootstrap-checkbox.js"></script>
   <!-- /Dependencies -->

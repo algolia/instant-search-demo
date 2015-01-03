@@ -1,6 +1,6 @@
 (function($) {
   // Client initialization
-    var algolia = new AlgoliaSearch('latency', '6be0576ff61c053d5f9a3225e2a90f76', {dsn: true, tld: 'net'}); // replace by your own ApplicationID and SearchableOnlyAPIKey
+  var algolia = new AlgoliaSearch('latency', '6be0576ff61c053d5f9a3225e2a90f76', {dsn: true, tld: 'net'}); // replace by your own ApplicationID and SearchableOnlyAPIKey
 
   // DOM binding
   var $hits = $('#hits');
@@ -12,6 +12,7 @@
   var $paginationTemplate = Hogan.compile($('#pagination-template').text());
   var $facets = $('#facets');
   var $facetTemplate = Hogan.compile($('#facet-template').text());
+  var $facetWithAutocompleteTemplate = Hogan.compile($('#facet-with-autocomplete-template').text());
   var $sliderTemplate = Hogan.compile($('#slider-template').text());
 
   // Helper initialization
@@ -27,6 +28,8 @@
     hitsPerPage: 10
   });
 
+  // 
+
   // Helpers
   Number.prototype.numberWithDelimiter = function(delimiter) {
     var number = this + '', delimiter = delimiter || ',';
@@ -41,12 +44,13 @@
   function sortByNumAsc(a, b) { return parseInt(a.label) - parseInt(b.label); }
   var FACETS = [
     { name: 'type', title: 'Type', sortFunction: sortByCountDesc },
+    { name: 'manufacturer', title: 'Manufacturer', sortFunction: sortByNumAsc, topListIfRefined: true, autocompleteIndexName: 'bestbuy_manufacturer' },
     { name: 'shipping', title: 'Shipping', sortFunction: sortByCountDesc },
     { name: 'customerReviewCount', title: '# Reviews' },
     { name: 'category', title: 'Categories', sortFunction: sortByCountDesc, topListIfRefined: true },
-    { name: 'salePrice_range', title: 'Price', sortFunction: sortByNumAsc },
-    { name: 'manufacturer', title: 'Manufacturer', sortFunction: sortByNumAsc, topListIfRefined: true }
+    { name: 'salePrice_range', title: 'Price', sortFunction: sortByNumAsc }
   ];
+  var facetAutocomplete = {};
   var refinements = {};
   var minReviewsCount = 0;
 
@@ -72,7 +76,7 @@
     html = '';
     var facetResult = null;
     var facetConfig = null;
-    var isDisjunctive = null; 
+    var isDisjunctive = null;
 
     for (var j=0; j<FACETS.length; ++j) {
       facetConfig = FACETS[j];
@@ -107,16 +111,28 @@
           });
 
           // render the facet
-          html += $facetTemplate.render({
-            facet: facetConfig.name,
-            title: facetConfig.title,
-            values: values.slice(0, 10),
-            has_other_values: values.length > 10,
-            other_values: values.slice(10),
-            disjunctive: isDisjunctive
-          });
-        }
-      
+          if (facetConfig.autocompleteIndexName) {
+            facetAutocomplete[facetConfig.name] = values;
+            html += $facetWithAutocompleteTemplate.render({
+              facet: facetConfig.name,
+              title: facetConfig.title,
+              values: values,
+              disjunctive: isDisjunctive,
+              has_autocomplete: true
+            });
+          }
+          else {
+            html += $facetTemplate.render({
+              facet: facetConfig.name,
+              title: facetConfig.title,
+              values: values.slice(0, 10),
+              has_other_values: values.length > 10,
+              other_values: values.slice(10),
+              disjunctive: isDisjunctive
+            });
+          }
+         
+        }      
       }
     }
     $facets.html(html);
@@ -133,6 +149,37 @@
       minReviewsCount = ev.value;
       search();
     });
+
+    // bind autocomplete
+    for (j=0; j<FACETS.length; ++j) {
+      facetConfig = FACETS[j];
+      
+
+      if (facetConfig.autocompleteIndexName) {
+        var autocompleteIndex = algolia.initIndex(facetConfig.autocompleteIndexName);
+        var facetName = facetConfig.name;
+        $('#typeahead-facet-' + facetName).typeahead(null, {
+          name: name,
+          displayKey: 'name',
+          source: (function(params) { 
+            return function(query, cb) {
+                autocompleteIndex.search(query, function(success, content) {
+                    if (success) {
+                        cb(content.hits);
+                    }
+                }, params);
+            }
+          })({ hitsPerPage: 5 }),
+          templates: {
+            suggestion: function(hit) {
+              return Hogan.compile('{{{_highlightResult.name.value}}}  <span class="count">({{product_count}})</span>').render(hit);
+            }
+          }
+        }).on('typeahead:selected', function(event, suggestion, dataset) {
+          toggleRefine(facetName, suggestion.name);
+        });
+      }
+    }
 
     // pimp checkboxes
     $('input[type="checkbox"]').checkbox();

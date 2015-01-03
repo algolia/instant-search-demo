@@ -23,6 +23,7 @@ We've included some credentials in the code allowing you to test the demo withou
 
 ```
 ./push.rb YourApplicationID YourAPIKey YourIndexName
+./push_manufacturer.rb YourApplicationID YourAPIKey YourIndexName
 ```
 
 Then, you'll need to replace the demo credentials with your own ones:

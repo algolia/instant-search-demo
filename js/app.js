@@ -40,12 +40,12 @@
   function sortByCountDesc(a, b) { return b.count - a.count; }
   function sortByNumAsc(a, b) { return parseInt(a.label) - parseInt(b.label); }
   var FACETS = [
-    { name: 'type', title: 'Type', sortFunction: sortByCountDesc },
-    { name: 'shipping', title: 'Shipping', sortFunction: sortByCountDesc },
-    { name: 'customerReviewCount', title: '# Reviews' },
-    { name: 'category', title: 'Categories', sortFunction: sortByCountDesc, topListIfRefined: true },
-    { name: 'salePrice_range', title: 'Price', sortFunction: sortByNumAsc },
-    { name: 'manufacturer', title: 'Manufacturer', sortFunction: sortByNumAsc, topListIfRefined: true }
+  { name: 'type', title: 'Type', sortFunction: sortByCountDesc },
+  { name: 'shipping', title: 'Shipping', sortFunction: sortByCountDesc },
+  { name: 'customerReviewCount', title: 'Reviews' },
+  { name: 'category', title: 'Categories', sortFunction: sortByCountDesc, topListIfRefined: true },
+  { name: 'salePrice_range', title: 'Price', sortFunction: sortByNumAsc },
+  { name: 'manufacturer', title: 'Manufacturer', sortFunction: sortByNumAsc, topListIfRefined: true }
   ];
   var refinements = {};
   var minReviewsCount = 0;
@@ -116,7 +116,7 @@
             disjunctive: isDisjunctive
           });
         }
-      
+        
       }
     }
     $facets.html(html);

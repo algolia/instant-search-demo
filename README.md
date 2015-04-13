@@ -4,18 +4,18 @@ Instant-Search Demo
 This is a sample project implementing an instant-search based e-commerce website with [Algolia](http://www.algolia.com). Algolia is a Search API that provides hosted full-text, numerical and faceted search.
 
 #### Features
- * Full JavaScript (based on [jQuery](http://jquery.com/), [Hogan.js](http://twitter.github.io/hogan.js/) and [AlgoliaSearch](https://github.com/algolia/algoliasearch-client-js))
- * Results page refreshed as you type
-   * Hits
-   * Facets
-   * Pagination
- * Relevant results from the first keystroke
- * Typo-tolerance
- * Multiple sort orders
-   * By Relevance
-   * By Highest Price
-   * By Lowest Price
- * Backup search parameters in the URL
+* Full JavaScript (based on [jQuery](http://jquery.com/), [Hogan.js](http://twitter.github.io/hogan.js/) and [AlgoliaSearch](https://github.com/algolia/algoliasearch-client-js))
+* Results page refreshed as you type
+* Hits
+* Facets
+* Pagination
+* Relevant results from the first keystroke
+* Typo-tolerance
+* Multiple sort orders
+* By Relevance
+* By Highest Price
+* By Lowest Price
+* Backup search parameters in the URL
 
 Usage
 ------
@@ -25,10 +25,10 @@ We've included some credentials in the code allowing you to test the demo withou
 ./push.rb YourApplicationID YourAPIKey YourIndexName
 ```
 
-Then, you'll need to replace the demo credentials with your own ones:
- - in ```js/app.js```, set your own ```APPLICATION_ID``` instead of ```"latency"``` (which is our demo ```APPLICATION_ID```),
- - in ```js/app.js```, set your own ```SEARCH_ONLY_API_KEY``` instead of ```"6be0576ff61c053d5f9a3225e2a90f76"```,
- - in ```js/app.js```, set your own ```index``` name instead of ```"bestbuy"```.
+Then, you'll need to replace the demo credentials with your own:
+- in ```js/app.js```, set your own ```APPLICATION_ID``` instead of ```"latency"``` (which is our demo ```APPLICATION_ID```),
+- in ```js/app.js```, set your own ```SEARCH_ONLY_API_KEY``` instead of ```"6be0576ff61c053d5f9a3225e2a90f76"```,
+- in ```js/app.js```, set your own ```index``` name instead of ```"bestbuy"```.
 
 Data Set
 ---------

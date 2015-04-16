@@ -33,3 +33,9 @@ Then, you'll need to replace the demo credentials with your own ones:
 Data Set
 ---------
 We've extracted 10,000 products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).
+
+
+Demo
+-----
+
+![Instant search](instant-search.gif)

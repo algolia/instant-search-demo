@@ -1,0 +1,78 @@
+// Custom for Algolia's blog
+@import "theme/facets";
+@import "theme/hits";
+@import "theme/search-input";
+@import "theme/page-header";
+
+
+/* Header */
+header {
+	margin-top: 40px;
+}
+#logo {
+	display: block;
+	width: 100%;
+	margin-bottom: 30px;
+	margin-top: 6px;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 400px;
+
+}
+@media (min-width: 992px) {
+	#logo {
+		width: 100%;
+		max-width: 100%;
+		text-align: left;
+	}
+}
+.main_caption {
+	margin-bottom: 30px;
+}
+p.main-caption_text {
+	font-size: 15px;
+}
+/* /Header */
+
+/* Stats */
+#stats h5 {
+	margin-top: 0;
+	margin-bottom: 4px;
+}
+#stats h5 span {
+	font-weight: 300;
+	margin-left: 6px;
+}
+/* /Stats */
+
+/* Sort */
+#sort-by {
+	font-weight: 300;
+	margin-right: 4px;
+	position: relative;
+	top: -2px;
+}
+#sort-button {
+	background: none;
+	border: none;
+	position: relative;
+	top: -3px;
+	padding: 0;
+	&.open {
+
+	}
+}
+.btn-group.open #sort-button {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+/* /Sort */
+
+/* Footer */
+footer.well {
+	background-color: white;
+	box-shadow: none;
+	margin-top: 100px;
+}
+/* /Footer */
+

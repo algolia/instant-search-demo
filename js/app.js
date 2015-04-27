@@ -50,14 +50,14 @@ $(document).ready(function() {
   }).focus();
 
   // AlgoliaHelper events
-  helper.on("change", function(error) {
+  helper.on('change', function(error) {
     // update URL anchor
     setURLParams(helper.state);
   });
-  helper.on("error", function(error) {
+  helper.on('error', function(error) {
     console.log(error);
   });
-  helper.on("result", function(content) {
+  helper.on('result', function(content) {
     var processedContent = processContent(content, this.state);
     displayContent(processedContent);
     bindSearchObjects();
@@ -99,8 +99,8 @@ $(document).ready(function() {
         if (facetParams.type === 'slider') {
           facetContent.min = facetResult.stats.min;
           facetContent.max = facetResult.stats.max;
-          var valueMin = state.getNumericRefinement("customerReviewCount", ">=") || facetResult.stats.min;
-          var valueMax = state.getNumericRefinement("customerReviewCount", "<=") || facetResult.stats.max;
+          var valueMin = state.getNumericRefinement('customerReviewCount', '>=') || facetResult.stats.min;
+          var valueMax = state.getNumericRefinement('customerReviewCount', '<=') || facetResult.stats.max;
           valueMin = Math.min(facetContent.max, Math.max(facetContent.min, valueMin));
           valueMax = Math.min(facetContent.max, Math.max(facetContent.min, valueMax));
           facetContent.values = [valueMin, valueMax];
@@ -187,32 +187,32 @@ $(document).ready(function() {
   function bindSearchObjects() {
     // Slider binding
     $('#customerReviewCount-slider').slider().on('slideStop', function(ev) {
-      helper.addNumericRefinement("customerReviewCount", ">=", ev.value[0]).search();
-      helper.addNumericRefinement("customerReviewCount", "<=", ev.value[1]).search();
+      helper.addNumericRefinement('customerReviewCount', '>=', ev.value[0]).search();
+      helper.addNumericRefinement('customerReviewCount', '<=', ev.value[1]).search();
     });
 
     // Pimp checkboxes
-    $('input[type="checkbox"]').checkbox(); 
+    $('input[type="checkbox"]').checkbox();
   }
 
   // Click binding
-  $(document).on("click",".show-more, .show-less",function() {
+  $(document).on('click','.show-more, .show-less',function() {
     $(this).closest('ul').find('.show-more').toggle();
     $(this).closest('ul').find('.show-less').toggle();
   });
-  $(document).on("click",".toggleRefine",function() {
-    helper.toggleRefine($(this).data("facet"), $(this).data("value")).search();
+  $(document).on('click','.toggleRefine',function() {
+    helper.toggleRefine($(this).data('facet'), $(this).data('value')).search();
   });
-  $(document).on("click",".gotoPage",function() {
-    helper.setCurrentPage(+$(this).data("page") - 1).search();
+  $(document).on('click','.gotoPage',function() {
+    helper.setCurrentPage(+$(this).data('page') - 1).search();
     window.scrollTo(0, 0);
   });
-  $(document).on("click",".sortBy",function() {
+  $(document).on('click','.sortBy',function() {
     $(this).closest('.btn-group').find('.sort-by').text($(this).text());
-    helper.setIndex(indexName + $(this).data("index-suffix")).search(); // Todo remove when new helper
+    helper.setIndex(indexName + $(this).data('index-suffix')).search(); // Todo remove when new helper
   });
-  $(document).on("click","#input-loop",function() {
-    $inputField.val("").change();
+  $(document).on('click','#input-loop',function() {
+    $inputField.val('').change();
   });
 
 
@@ -222,12 +222,12 @@ $(document).ready(function() {
 
   function toggleIconEmptyInput(isEmpty) {
     if(isEmpty) {
-      $('#input-loop').addClass("glyphicon-loop");
-      $('#input-loop').removeClass("glyphicon-remove");
+      $('#input-loop').addClass('glyphicon-loop');
+      $('#input-loop').removeClass('glyphicon-remove');
     }
     else {
-      $('#input-loop').removeClass("glyphicon-loop");
-      $('#input-loop').addClass("glyphicon-remove");
+      $('#input-loop').removeClass('glyphicon-loop');
+      $('#input-loop').addClass('glyphicon-remove');
     }
   }
   function numberWithDelimiter(number, delimiter) {
@@ -270,17 +270,17 @@ $(document).ready(function() {
 
   }
   function setURLParams(state) {
-    var urlParams = "#";
+    var urlParams = '#';
     var currentQuery = state.query;
-    urlParams += "q=" + encodeURIComponent(currentQuery);
+    urlParams += 'q=' + encodeURIComponent(currentQuery);
     var currentPage = state.page+1;
-    urlParams += "&page=" + currentPage;
+    urlParams += '&page=' + currentPage;
     for (var facetRefine in state.facetsRefinements) {
-      urlParams += "&" + encodeURIComponent(facetRefine) + "=" + encodeURIComponent(state.facetsRefinements[facetRefine]);
+      urlParams += '&' + encodeURIComponent(facetRefine) + '=' + encodeURIComponent(state.facetsRefinements[facetRefine]);
     }
     for (var disjunctiveFacetrefine in state.disjunctiveFacetsRefinements) {
       for (var value in state.disjunctiveFacetsRefinements[disjunctiveFacetrefine]) {
-        urlParams += "&" + encodeURIComponent(disjunctiveFacetrefine) + "=" + encodeURIComponent(state.disjunctiveFacetsRefinements[disjunctiveFacetrefine][value]);
+        urlParams += '&' + encodeURIComponent(disjunctiveFacetrefine) + '=' + encodeURIComponent(state.disjunctiveFacetsRefinements[disjunctiveFacetrefine][value]);
       }
     }
     location.replace(urlParams);

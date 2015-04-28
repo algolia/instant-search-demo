@@ -4,14 +4,11 @@ $(document).ready(function() {
   * INITIALIZATION
   * *******************/
 
-
   // REPLACE WITH YOUR OWN VALUES
   var APPLICATION_ID = 'latency';
   var SEARCH_ONLY_API_KEY = '6be0576ff61c053d5f9a3225e2a90f76'
   var INDEX_NAME = 'bestbuy';
   var HITS_PER_PAGE = 10;
-  var FACETS = ['type', 'shipping'];
-  var DISJUNCTIVE_FACETS = ['customerReviewCount', 'category', 'salePrice_range', 'manufacturer'];
   var FACET_CONFIG = [
     { name: 'type',                title: 'Type',         disjunctive: false, sortFunction: sortByCountDesc },
     { name: 'shipping',            title: 'Shipping',     disjunctive: false, sortFunction: sortByCountDesc },
@@ -44,8 +41,8 @@ $(document).ready(function() {
   var params = {
     hitsPerPage: HITS_PER_PAGE,
     maxValuesPerFacet: MAX_VALUES_PER_FACET,
-    facets: FACETS,
-    disjunctiveFacets: DISJUNCTIVE_FACETS
+    facets: $.map(FACET_CONFIG, function(facet) { return !facet.disjunctive ? facet.name : null; }),
+    disjunctiveFacets: $.map(FACET_CONFIG, function(facet) { return facet.disjunctive ? facet.name : null; })
   };
   var helper = algoliasearchHelper(algolia, INDEX_NAME, params);
 

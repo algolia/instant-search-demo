@@ -6,7 +6,7 @@ $(document).ready(function() {
   * *******************/
 
   // Client initialization
-  var algolia = algoliasearch('latency', '6be0576ff61c053d5f9a3225e2a90f76', {dsn: true, tld: 'net'}); // replace by your own ApplicationID and SearchableOnlyAPIKey
+  var algolia = algoliasearch('latency', '6be0576ff61c053d5f9a3225e2a90f76'); // replace by your own ApplicationID and SearchableOnlyAPIKey
 
   // DOM binding
   var $inputField = $('#q');

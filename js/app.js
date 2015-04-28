@@ -50,15 +50,15 @@ $(document).ready(function() {
   }).focus();
 
   // AlgoliaHelper events
-  helper.on('change', function(error) {
+  helper.on('change', function(state) {
     // update URL anchor
-    setURLParams(helper.state);
+    setURLParams(state);
   });
   helper.on('error', function(error) {
     console.log(error);
   });
-  helper.on('result', function(content) {
-    var processedContent = processContent(content, this.state);
+  helper.on('result', function(content, state) {
+    var processedContent = processContent(content, state);
     displayContent(processedContent);
     bindSearchObjects();
   });

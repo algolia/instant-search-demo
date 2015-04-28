@@ -103,17 +103,16 @@ $(document).ready(function() {
         facetContent.title = facetParams.title;
         facetContent.type = facetParams.type;
 
-        // if the facet is a slider
         if (facetParams.type === 'slider') {
+          // if the facet is a slider
           facetContent.min = facetResult.stats.min;
           facetContent.max = facetResult.stats.max;
-          var valueMin = state.getNumericRefinement('customerReviewCount', '>=') || facetResult.stats.min;
-          var valueMax = state.getNumericRefinement('customerReviewCount', '<=') || facetResult.stats.max;
+          var valueMin = state.getNumericRefinement(facetParams.name, '>=') || facetResult.stats.min;
+          var valueMax = state.getNumericRefinement(facetParams.name, '<=') || facetResult.stats.max;
           valueMin = Math.min(facetContent.max, Math.max(facetContent.min, valueMin));
           valueMax = Math.min(facetContent.max, Math.max(facetContent.min, valueMax));
           facetContent.values = [valueMin, valueMax];
         } else {
-
           // format and sort the facet values
           var values = [];
           for (var v in facetResult.data) {

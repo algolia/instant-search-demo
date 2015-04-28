@@ -1,12 +1,27 @@
 $(document).ready(function() {
 
-
   /********************
   * INITIALIZATION
   * *******************/
 
-  // Client initialization
-  var algolia = algoliasearch('latency', '6be0576ff61c053d5f9a3225e2a90f76'); // replace by your own ApplicationID and SearchableOnlyAPIKey
+
+  // REPLACE WITH YOUR OWN VALUES
+  var APPLICATION_ID = 'latency';
+  var SEARCH_ONLY_API_KEY = '6be0576ff61c053d5f9a3225e2a90f76'
+  var INDEX_NAME = 'bestbuy';
+  var HITS_PER_PAGE = 10;
+  var FACETS = ['type', 'shipping'];
+  var DISJUNCTIVE_FACETS = ['customerReviewCount', 'category', 'salePrice_range', 'manufacturer'];
+  var FACET_CONFIG = [
+    { name: 'type',                title: 'Type',         disjunctive: false, sortFunction: sortByCountDesc },
+    { name: 'shipping',            title: 'Shipping',     disjunctive: false, sortFunction: sortByCountDesc },
+    { name: 'customerReviewCount', title: '# Reviews',    disjunctive: true,                                type: 'slider' },
+    { name: 'category',            title: 'Category',     disjunctive: true, sortFunction: sortByCountDesc, topListIfRefined: true },
+    { name: 'salePrice_range',     title: 'Price range',  disjunctive: true, sortFunction: sortByName },
+    { name: 'manufacturer',        title: 'Manufacturer', disjunctive: true, sortFunction: sortByName,      topListIfRefined: true }
+  ];
+  var MAX_VALUES_PER_FACET = 30;
+  // END REPLACE
 
   // DOM binding
   var $inputField = $('#q');
@@ -22,25 +37,17 @@ $(document).ready(function() {
   var sliderTemplate = Hogan.compile($('#slider-template').text());
   var paginationTemplate = Hogan.compile($('#pagination-template').text());
 
-  // Initialize facets
-  var FACETS = [
-  { name: 'type',                title: 'Type',         disjunctive: false, sortFunction: sortByCountDesc },
-  { name: 'shipping',            title: 'Shipping',     disjunctive: false, sortFunction: sortByCountDesc },
-  { name: 'customerReviewCount', title: '# Reviews',    disjunctive: true,                                type: 'slider' },
-  { name: 'category',            title: 'Category',     disjunctive: true, sortFunction: sortByCountDesc, topListIfRefined: true },
-  { name: 'salePrice_range',     title: 'Price range',  disjunctive: true, sortFunction: sortByName },
-  { name: 'manufacturer',        title: 'Manufacturer', disjunctive: true, sortFunction: sortByName,      topListIfRefined: true }
-  ];
+  // Client initialization
+  var algolia = algoliasearch(APPLICATION_ID, SEARCH_ONLY_API_KEY);
 
   // Helper initialization
-  var indexName = 'bestbuy'; // replace by your own index name
   var params = {
-    hitsPerPage: 10, // number of results per page
-    maxValuesPerFacet: 30, // number of facets values retrieved
-    facets: ['type', 'shipping'],
-    disjunctiveFacets: ['customerReviewCount', 'category', 'salePrice_range', 'manufacturer']
+    hitsPerPage: HITS_PER_PAGE,
+    maxValuesPerFacet: MAX_VALUES_PER_FACET,
+    facets: FACETS,
+    disjunctiveFacets: DISJUNCTIVE_FACETS
   };
-  var helper = algoliasearchHelper(algolia, indexName, params);
+  var helper = algoliasearchHelper(algolia, INDEX_NAME, params);
 
   // Input binding
   $inputField.on('keyup change', function() {
@@ -82,6 +89,7 @@ $(document).ready(function() {
 
   // Process response sent by Algolia
   function processContent(content, state) {
+
     // Process stats
     var stats =  {
       nbHits: numberWithDelimiter(content.nbHits),
@@ -94,8 +102,8 @@ $(document).ready(function() {
 
     // Process facets
     var facets = [];
-    for (var facetIndex = 0; facetIndex < FACETS.length; ++facetIndex) {
-      var facetParams = FACETS[facetIndex];
+    for (var facetIndex = 0; facetIndex < FACET_CONFIG.length; ++facetIndex) {
+      var facetParams = FACET_CONFIG[facetIndex];
       var facetResult = content.getFacetByName(facetParams.name);
       if (facetResult) {
         var facetContent = {};
@@ -216,7 +224,7 @@ $(document).ready(function() {
   });
   $(document).on('click','.sortBy',function() {
     $(this).closest('.btn-group').find('.sort-by').text($(this).text());
-    helper.setIndex(indexName + $(this).data('index-suffix')).search(); // Todo remove when new helper
+    helper.setIndex(INDEX_NAME + $(this).data('index-suffix')).search();
   });
   $(document).on('click','#input-loop',function() {
     $inputField.val('').change();
@@ -224,7 +232,7 @@ $(document).ready(function() {
 
 
   /************
-  * TOOLS
+  * HELPERS
   * ***********/
 
   function toggleIconEmptyInput(isEmpty) {

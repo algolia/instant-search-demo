@@ -31,7 +31,7 @@ Then, you'll need to replace the demo credentials with your own:
 - in ```js/app.js```, set your own ```index``` name instead of ```"bestbuy"```.
 
 
-## Learn how this demo has been built
+## Tutorial
 
 **Follow this [step by step tutorial](https://www.algolia.com/doc/tutorials/instant-search#) (on Algolia.com) to learn how this implementation works** and how it has been built using the [Algolia's Javascript API client](https://github.com/algolia/algoliasearch-client-js) and its [helper](https://github.com/algolia/algoliasearch-helper-js).
 

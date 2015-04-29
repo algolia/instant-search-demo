@@ -95,6 +95,7 @@ $(document).ready(function() {
     if (content.hits.length === 0) hitsHtml = '<p id="no-hits">We didn\'t find any products for your search.</p>';
     $hits.html(hitsHtml);
   }
+  
   function renderFacets(content, state) {
     // If no results
     if (content.hits.length === 0) {

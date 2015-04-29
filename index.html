@@ -1,112 +1,142 @@
+<!doctype html>
 <html>
 <head>
   <title>Instant Search Demo</title>
-  <!-- Dependencies -->
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="css/bootstrap-slider.css">
-  <link rel="stylesheet" type="text/css" href="css/bootstrap-checkbox.css">
-  <!-- /Dependencies -->
-  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <!-- Includes Bootstrap 3.2.0, bootstrap-slider & bootstrap-checkbox -->
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
 
   <!-- Header -->
-  <nav class="navbar navbar-default" role="navigation">
+  <header>
     <div class="container">
       <div class="row">
-        <div class="col-sm-3 hidden-xs">
-          <a href="" class="navbar-brand">Instant-Search Demo</a>
+
+        <!-- Logo -->
+        <div class="col-md-3 col-md-offset-1 col-xs-12">
+          <a href=""><img id="logo" src="/img/instant_search_logo@2x.png"/></a>
         </div>
-        <div class="col-sm-9 col-xs-12">
-          <!-- Search bar -->
-          <div class="input-group input-group-lg m-t">
-            <input type="text" name="q" id="q" autocomplete="off" spellcheck="false" autocorrect="false" class="form-control string" placeholder="Search by name, brand, description..." />
-            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
-          </div>
-          <!-- /Search bar -->
-          <div class="text-right text-muted">
-            Search powered by <a href="http://www.algolia.com"><img src="//www.algolia.com/assets/algolia128x40.png" style="height: 1em; margin-right: 50px;" /></a>
+
+        <!-- Search bar -->
+        <div class="col-md-7 col-xs-12">
+          <div id="search_input" class="input-group input-lg m-t">
+            <input type="text" name="q" id="q" autocomplete="off" spellcheck="false" autocorrect="false" class="form-control input-lg string" placeholder="Search by name, brand, description..."/>
+            <span class="input-group-addon"><i id="input-loop" class="glyphicon glyphicon-search"></i></span>
           </div>
         </div>
+
       </div>
     </div>
-  </nav>
+  </header>
   <!-- /Header -->
 
-  <!-- Results page -->
-  <section class="container">
+
+  <!-- Main -->
+  <div class="container">
     <div class="row">
-      <!-- Facets -->
-      <div class="col-sm-3 hidden-xs" id="facets"></div>
-      <!-- /Facets -->
 
-      <div class="col-sm-9 col-xs-12">
-        <div class="panel panel-default">
-          <!-- Stats + sort order menu -->
-          <div class="panel-heading">
-            <div class="pull-right">
-              <div class="btn-group">
-                <button type="button" class="btn btn-success dropdown-toggle btn-xs" data-toggle="dropdown">
-                  <span class="sort-by">Sort by Relevance</span> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a href="#" onclick="sortBy('', this); return false;">Sort by Relevance</a></li>
-                  <li><a href="#" onclick="sortBy('_price_asc', this); return false;">Lowest Price</a></li>
-                  <li><a href="#" onclick="sortBy('_price_desc', this); return false;">Highest Price</a></li>
-                </ul>
-              </div>
-            </div>
-            <span id="stats">&nbsp;</span>
-          </div>
-          <!-- /Stats + sort order menu -->
-
-          <!-- Hits -->
-          <div class="panel-body" id="hits"></div>
-          <!-- /Hits -->
+      <!-- Left Column -->
+      <div class="col-md-3 col-md-offset-1 col-xs-12 hidden-sm hidden-xs">
+        <div class="main_caption">
+          <p class="main-caption_text">Super minimal demo of an instant-search result page by Algolia.</p>
+          <p class="main-caption_text">Read the online <a href="https://www.algolia.com/doc/tutorials/instant-search">Tutorial</a> or see the source code on <a href="http://github.com/algolia/instant-search-demo">Github</a>.</p>
         </div>
+        <!-- Facets -->
+        <div id="facets" class="hidden-sm hidden-xs"></div>
+      </div>
+      <!-- /Left Column -->
+
+      <!-- Right Column -->
+      <div class="col-md-7 col-xs-12">
+
+        <!-- Stats + sort order menu -->
+        <div class="page-header">
+          <div class="pull-right sort-orders">
+            <span id="sort-by" class="text-muted">Sort by:</span>
+            <div class="btn-group">
+              <button id="sort-button" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="sort-by">Relevance</span> <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#" class="sortBy" data-index-suffix="">Relevance</a></li>
+                <li><a href="#" class="sortBy" data-index-suffix="_price_asc">Lowest Price</a></li>
+                <li><a href="#" class="sortBy" data-index-suffix="_price_desc">Highest Price</a></li>
+              </ul>
+            </div>
+          </div>
+          <span id="stats"></span>
+          <div style="clear:both;"></div>
+        </div>
+        <!-- /Stats + sort order menu -->
+
+        <!-- Hits -->
+        <div id="hits"></div>
+        <!-- /Hits -->
 
         <!-- Pagination -->
         <div id="pagination"></div>
         <!-- /Pagination -->
+
+        <!-- /Right Column -->
       </div>
     </div>
-  </section>
-  <!-- /Results page -->
+  </div>
+  <!-- /Main -->
+
 
   <!-- Facet template -->
   <script type="text/template" id="facet-template">
     <div class="facet">
-      <ul class="list-group">
-        <!-- facet title -->
-        <li class="list-group-item text-center list-group-item-info"><b>{{ title }}</b></li>
+      <!-- facet title -->
+      <div class="page-header">
+        <h5>{{ title }}</h5>
+      </div>
+      <ul class="list-unstyled">
 
         {{#values}}
-          <li class="{{#refined}}refined{{/refined}} list-group-item">
-            {{#disjunctive}}
-              <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">
-            {{/disjunctive}}
-            <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
-          </li>
+        <li class="{{#refined}}refined{{/refined}}">
+          {{#disjunctive}}
+          <input class="checkbox toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
+          {{/disjunctive}}
+          <a class="facet_link toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" href="#">{{ label }}</a>
+          <small class="facet_count text-muted pull-right">{{ count }}</small>
+        </li>
         {{/values}}
 
         <!-- other values will only be displayed if the use click on the "show more" link  -->
         {{#has_other_values}}
-          <!-- "show more" link -->
-          <li class="show-more list-group-item"><a href="#" onclick="showMoreLess(this); return false;"><i class="glyphicon glyphicon-chevron-down" /> more</a></li>
+        <!-- "show more" link -->
+        <li class="show-more"><a href="#" onclick="showMoreLess(this); return false;"><i class="glyphicon glyphicon-chevron-down" /> more</a></li>
 
-          <!-- other values -->
-          {{#other_values}}
-            <li class="{{#refined}}refined{{/refined}} show-more list-group-item" style="display: none">
-              {{#disjunctive}}
-                <input class="checkbox" type="checkbox" {{#refined}}checked="checked"{{/refined}} onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">
-              {{/disjunctive}}
-              <a href="#" onclick="toggleRefine('{{ facet }}', '{{ value }}'); return false;">{{ label }}</a> ({{ count }})
-            </li>
-          {{/other_values}}
+        <!-- other values -->
+        {{#other_values}}
+        <li class="{{#refined}}refined{{/refined}} additional-facets show-more">
+          {{#disjunctive}}
+          <input class="checkbox toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
+          {{/disjunctive}}
+          <a class="facet_link toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" href="#">{{ label }}</a><small class="text-muted pull-right">{{ count }}</small>
+        </li>
+        {{/other_values}}
 
-          <!-- "show less" link -->
-          <li class="show-more list-group-item" style="display: none" onclick="showMoreLess(this); return false;"><a href=""><i class="glyphicon glyphicon-chevron-up" /> less</a></li>
+        <!-- "show less" link -->
+        <li class="show-less" onclick="showMoreLess(this); return false;"><a href=""><i class="glyphicon glyphicon-chevron-up" /> less</a></li>
         {{/has_other_values}}
+      </ul>
+    </div>
+  </script>
+
+  <!-- Slider template -->
+  <script type="text/template" id="slider-template">
+    <div class="facet">
+      <ul class="list-unstyled">
+        <div class="page-header">
+          <h5>{{ title }}</h5>
+        </div>
+        <li class="facet-slider">
+          <b>{{ min }}</b>
+          <input type="text" data-slider-min="{{ min }}" data-slider-max="{{ max }}" data-slider-step="1" data-slider-value="[{{ values }}]" data-slider-orientation="horizontal" data-slider-selection="after" id="{{ facet }}-slider" />
+          <b>{{ max }}</b>
+        </li>
       </ul>
     </div>
   </script>
@@ -118,17 +148,18 @@
         <img class="media-object" src="{{ image }}" alt="{{ name }}">
       </a>
       <div class="media-body">
-        <h3 class="pull-right text-right text-danger">
+        <h3 class="hit_price pull-right text-right text-danger">
           ${{ salePrice }}
         </h3>
-        <h4>{{{ _highlightResult.name.value }}}</h4>
-        <p class="text-muted">
+        <h4 class="hit_name">{{{ _highlightResult.name.value }}}</h4>
+        <p>
           {{{ _highlightResult.shortDescription.value }}}
         </p>
-        <ul class="list-inline">
-          <li>{{{ _highlightResult.manufacturer.value }}}</li>
-          <li>{{{ _highlightResult.category.value }}}</li>
-          <li>{{ type }}</li>
+        <ul class="hit_tags list-inline">
+          {{#_highlightResult.manufacturer}}<li>{{{ _highlightResult.manufacturer.value }}}</li>{{/_highlightResult.manufacturer}}
+          {{#_highlightResult.category}}<li>{{{ _highlightResult.category.value }}}</li>{{/_highlightResult.category}}
+          {{#type}}<li>{{{ type }}}</li>{{/type}}
+          <!-- TODO TODO Use Bootstrap labels here -->
         </ul>
       </div>
     </div>
@@ -138,44 +169,29 @@
   <script type="text/template" id="pagination-template">
     <div class="text-center">
       <ul class="pagination">
-        <li {{^prev_page}}class="disabled"{{/prev_page}}><a href="#" onclick="{{#prev_page}}gotoPage({{ prev_page }});{{/prev_page}} return false;">&laquo;</a></li>
+        <li {{^prev_page}}class="disabled"{{/prev_page}}><a href="#" {{#prev_page}} class="gotoPage" data-page="{{ prev_page }}" {{/prev_page}}>&#60;</a></li>
         {{#pages}}
-          <li class="{{#current}}active{{/current}}{{#disabled}}disabled{{/disabled}}"><a href="#" onclick="{{^disabled}}gotoPage({{ number }});{{/disabled}} return false;">{{ number }}</a></li>
+        <li class="{{#current}}active{{/current}}{{#disabled}}disabled{{/disabled}}"><a href="#" {{^disabled}} class="gotoPage" data-page="{{ number }}" {{/disabled}}>{{ number }}</a></li>
         {{/pages}}
-        <li {{^next_page}}class="disabled"{{/next_page}}><a href="#" onclick="{{#next_page}}gotoPage({{ next_page }});{{/next_page}} return false;">&raquo;</a></li>
-      </ul>
-    </div>
-  </script>
-
-  <!-- Slider template -->
-  <script type="text/template" id="slider-template">
-    <div class="facet">
-      <ul class="list-group">
-        <li class="list-group-item text-center list-group-item-info"><b>{{ title }}</b></li>
-        <li class="list-group-item text-center">
-          <b>0</b>
-          <input type="text" data-slider-min="0" data-slider-max="{{ max }}" data-slider-step="1" data-slider-value="{{ current }}" data-slider-orientation="horizontal" data-slider-selection="after" id="{{ facet }}-slider" />
-          <b>{{ max }}</b>
-        </li>
+        <li {{^next_page}}class="disabled"{{/next_page}}><a href="#" {{#next_page}} class="gotoPage" data-page="{{ next_page }}" {{/next_page}}>&#62;</a></li>
       </ul>
     </div>
   </script>
 
   <!-- Stats template -->
   <script type="text/template" id="stats-template">
-    <div class="stats">
-      We found <strong>{{ nbHits }}</strong> result{{#nbHits_plural}}s{{/nbHits_plural}} {{#query}}matching <strong>"{{ query }}"</strong>{{/query}} in <strong>{{ processingTimeMS }}</strong> ms
-    </div>
+    <h5>{{ nbHits }} RESULT{{#nbHits_plural}}S{{/nbHits_plural}} <span class="text-muted hidden-sm hidden-xs">Found in {{ processingTimeMS }}ms</span></h5>
   </script>
 
   <footer class="container text-muted text-center well">
-    Source Code on <a href="http://github.com/algolia/instant-search-demo">Github</a> - Data from <a href="https://developer.bestbuy.com"><img src="https://developer.bestbuy.com/images/bestbuy-logo.png" alt="Best Buy Developer"></a>
+    Source Code on <a href="http://github.com/algolia/instant-search-demo">Github</a> - Powered by <a href="http://algolia.com"><img src="https://www.algolia.com/img/algolia128x40.png" alt="Algolia"></a> - Data from <a href="https://developer.bestbuy.com"><img src="https://developer.bestbuy.com/images/bestbuy-logo.png" alt="Best Buy Developer"></a>
   </footer>
 
   <!-- Dependencies -->
   <script src="//cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-  <script src="//cdn.jsdelivr.net/algoliasearch/2/algoliasearch.min.js"></script>
+  <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+  <script src="//cdn.jsdelivr.net/algoliasearch.helper/2/algoliasearch.helper.min.js"></script>
   <script src="//cdn.jsdelivr.net/hogan.js/3.0.0/hogan.common.js"></script>
   <script src="js/bootstrap-slider.js"></script>
   <script src="js/bootstrap-checkbox.js"></script>

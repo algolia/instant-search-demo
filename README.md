@@ -3,8 +3,8 @@ Instant-Search Demo
 
 This is a sample project implementing an instant-search based e-commerce website with [Algolia](http://www.algolia.com). Algolia is a Search API that provides hosted full-text, numerical and faceted search.
 
-#### Features
-* Full JavaScript (based on [jQuery](http://jquery.com/), [Hogan.js](http://twitter.github.io/hogan.js/) and [AlgoliaSearch](https://github.com/algolia/algoliasearch-client-js))
+## Features
+* Full JavaScript (based on [jQuery](http://jquery.com/), [Hogan.js](http://twitter.github.io/hogan.js/) and [AlgoliaSearch](https://github.com/algolia/algoliasearch-client-js) + [helper](https://github.com/algolia/algoliasearch-helper-js))
 * Results page refreshed as you type
 * Hits
 * Facets
@@ -17,8 +17,9 @@ This is a sample project implementing an instant-search based e-commerce website
 * By Lowest Price
 * Backup search parameters in the URL
 
-Usage
-------
+## Usage
+--------
+
 We've included some credentials in the code allowing you to test the demo without any Algolia account. If you want to replicate this demo using your own Algolia credentials, you can use the ```push.rb``` script to send the data and configure the indices.
 
 ```
@@ -30,12 +31,15 @@ Then, you'll need to replace the demo credentials with your own:
 - in ```js/app.js```, set your own ```SEARCH_ONLY_API_KEY``` instead of ```"6be0576ff61c053d5f9a3225e2a90f76"```,
 - in ```js/app.js```, set your own ```index``` name instead of ```"bestbuy"```.
 
-Data Set
----------
-We've extracted 10,000 products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).
 
-
-Demo
------
-
+## Learn how this demo was built
+--------
+**Follow this [step by step tutorial](https://www.algolia.com/doc/tutorials/instant-search#) (on Algolia.com) to learn how this implementation works** and how it has been built using the [Algolia's Javascript API client](https://github.com/algolia/algoliasearch-client-js) and its [helper](https://github.com/algolia/algoliasearch-helper-js).
+## Demo
+--------
+Try out the [demo](http://demos.algolia.com/instant-search-demo/)
 ![Instant search](instant-search.gif)
+
+## Data Set
+--------
+We've extracted 10,000 products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).

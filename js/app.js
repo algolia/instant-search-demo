@@ -6,16 +6,16 @@ $(document).ready(function() {
 
   // REPLACE WITH YOUR OWN VALUES
   var APPLICATION_ID = 'latency';
-  var SEARCH_ONLY_API_KEY = '6be0576ff61c053d5f9a3225e2a90f76'
+  var SEARCH_ONLY_API_KEY = '6be0576ff61c053d5f9a3225e2a90f76';
   var INDEX_NAME = 'bestbuy';
   var HITS_PER_PAGE = 10;
   var FACET_CONFIG = [
-    { name: 'type',                title: 'Type',         disjunctive: false, sortFunction: sortByCountDesc },
-    { name: 'shipping',            title: 'Shipping',     disjunctive: false, sortFunction: sortByCountDesc },
-    { name: 'customerReviewCount', title: '# Reviews',    disjunctive: true,                                type: 'slider' },
-    { name: 'category',            title: 'Category',     disjunctive: true, sortFunction: sortByCountDesc, topListIfRefined: true },
-    { name: 'salePrice_range',     title: 'Price range',  disjunctive: true, sortFunction: sortByName },
-    { name: 'manufacturer',        title: 'Manufacturer', disjunctive: true, sortFunction: sortByName,      topListIfRefined: true }
+  { name: 'type', title: 'Type', disjunctive: false, sortFunction: sortByCountDesc },
+  { name: 'shipping', title: 'Shipping', disjunctive: false, sortFunction: sortByCountDesc },
+  { name: 'customerReviewCount', title: '# Reviews', disjunctive: true, type: 'slider' },
+  { name: 'category', title: 'Category', disjunctive: true, sortFunction: sortByCountDesc, topListIfRefined: true },
+  { name: 'salePrice_range', title: 'Price range', disjunctive: true, sortFunction: sortByName },
+  { name: 'manufacturer', title: 'Manufacturer', disjunctive: true, sortFunction: sortByName, topListIfRefined: true }
   ];
   var MAX_VALUES_PER_FACET = 30;
   // END REPLACE
@@ -55,24 +55,17 @@ $(document).ready(function() {
 
   // AlgoliaHelper events
   helper.on('change', function(state) {
-    // update URL anchor
     setURLParams(state);
   });
   helper.on('error', function(error) {
     console.log(error);
   });
   helper.on('result', function(content, state) {
-    var processedContent = processContent(content, state);
-    displayContent(processedContent);
+    renderStats(content);
+    renderHits(content);
+    renderFacets(content, state);
+    renderPagination(content);
     bindSearchObjects();
-  });
-
-  // Dynamic styles
-  $('#facets').on("mouseenter mouseleave", ".button-checkbox", function(e){
-    $(this).parent().find('.facet_link').toggleClass("hover");
-  });
-  $('#facets').on("mouseenter mouseleave", ".facet_link", function(e){
-    $(this).parent().find('.button-checkbox button.btn').toggleClass("hover");
   });
 
 
@@ -84,18 +77,30 @@ $(document).ready(function() {
   initWithUrlParams();
   helper.search();
 
-  // Process response sent by Algolia
-  function processContent(content, state) {
 
-    // Process stats
+  function renderStats(content) {
     var stats =  {
       nbHits: numberWithDelimiter(content.nbHits),
       processingTimeMS: content.processingTimeMS,
       nbHits_plural: content.nbHits !== 1
     };
+    $stats.html(statsTemplate.render(stats));
+  }
 
-    // Process hits
-    var hits = content.hits;
+  function renderHits(content) {
+    var hitsHtml = '';
+    for (var i = 0; i < content.hits.length; ++i) {
+      hitsHtml += hitTemplate.render(content.hits[i]);
+    }
+    if (content.hits.length === 0) hitsHtml = '<p id="no-hits">We didn\'t find any products for your search.</p>';
+    $hits.html(hitsHtml);
+  }
+  function renderFacets(content, state) {
+    // If no results
+    if (content.hits.length === 0) {
+      $facets.empty();
+      return;
+    }
 
     // Process facets
     var facets = [];
@@ -136,6 +141,22 @@ $(document).ready(function() {
         facets.push(facetContent);
       }
     }
+    // Display facets
+    var facetsHtml = '';
+    for (var indexFacet = 0; indexFacet < facets.length; ++indexFacet) {
+      var facet = facets[indexFacet];
+      if (facet.type && facet.type === 'slider') facetsHtml += sliderTemplate.render(facet);
+      else facetsHtml += facetTemplate.render(facet);
+    }
+    $facets.html(facetsHtml);
+  }
+
+  function renderPagination(content) {
+    // If no results
+    if (content.hits.length === 0) {
+      $pagination.empty();
+      return;
+    }
 
     // Process pagination
     var pages = [];
@@ -158,42 +179,10 @@ $(document).ready(function() {
       prev_page: (content.page > 0 ? content.page : false),
       next_page: (content.page + 1 < content.nbPages ? content.page + 2 : false)
     };
-
-    return {
-      stats: stats,
-      hits: hits,
-      facets: facets,
-      pagination: pagination
-    };
-  }
-
-  // Display the content on the page
-  function displayContent(content) {
-    // Display stats
-    $stats.html(statsTemplate.render(content.stats));
-
-    // Display hits
-    var hitsHtml = '';
-    for (var i = 0; i < content.hits.length; ++i) {
-      hitsHtml += hitTemplate.render(content.hits[i]);
-    }
-    if (content.hits.length === 0) hitsHtml = '<p id="no-hits">We didn\'t find any products for your search.</p>';
-    $hits.html(hitsHtml);
-
-    // Display facets
-    var facetsHtml = '';
-    for (var indexFacet = 0; indexFacet < content.facets.length; ++indexFacet) {
-      var facet = content.facets[indexFacet];
-      if (facet.type && facet.type === 'slider') facetsHtml += sliderTemplate.render(facet);
-      else facetsHtml += facetTemplate.render(facet);
-    }
-    $facets.html(facetsHtml);
-    if (content.hits.length === 0) $facets.empty();
-
     // Display pagination
-    $pagination.html(paginationTemplate.render(content.pagination));
-    if (content.hits.length === 0) $pagination.empty();
+    $pagination.html(paginationTemplate.render(pagination));
   }
+
 
   // Event bindings
   function bindSearchObjects() {
@@ -225,6 +214,14 @@ $(document).ready(function() {
   });
   $(document).on('click','#input-loop',function() {
     $inputField.val('').change();
+  });
+
+  // Dynamic styles
+  $('#facets').on("mouseenter mouseleave", ".button-checkbox", function(e){
+    $(this).parent().find('.facet_link').toggleClass("hover");
+  });
+  $('#facets').on("mouseenter mouseleave", ".facet_link", function(e){
+    $(this).parent().find('.button-checkbox button.btn').toggleClass("hover");
   });
 
 

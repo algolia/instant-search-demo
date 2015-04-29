@@ -18,7 +18,6 @@ This is a sample project implementing an instant-search based e-commerce website
 * Backup search parameters in the URL
 
 ## Usage
---------
 
 We've included some credentials in the code allowing you to test the demo without any Algolia account. If you want to replicate this demo using your own Algolia credentials, you can use the ```push.rb``` script to send the data and configure the indices.
 
@@ -32,14 +31,13 @@ Then, you'll need to replace the demo credentials with your own:
 - in ```js/app.js```, set your own ```index``` name instead of ```"bestbuy"```.
 
 
-## Learn how this demo was built
---------
+## Learn how this demo has been built
+
 **Follow this [step by step tutorial](https://www.algolia.com/doc/tutorials/instant-search#) (on Algolia.com) to learn how this implementation works** and how it has been built using the [Algolia's Javascript API client](https://github.com/algolia/algoliasearch-client-js) and its [helper](https://github.com/algolia/algoliasearch-helper-js).
+
 ## Demo
---------
 Try out the [demo](http://demos.algolia.com/instant-search-demo/)
 ![Instant search](instant-search.gif)
 
 ## Data Set
---------
 We've extracted 10,000 products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).

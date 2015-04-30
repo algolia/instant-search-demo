@@ -198,7 +198,8 @@ $(document).ready(function() {
   }
 
   // Click binding
-  $(document).on('click','.show-more, .show-less',function() {
+  $(document).on('click','.show-more, .show-less',function(e) {
+    e.preventDefault();
     $(this).closest('ul').find('.show-more').toggle();
     $(this).closest('ul').find('.show-less').toggle();
   });

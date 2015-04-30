@@ -106,7 +106,7 @@
         <!-- other values will only be displayed if the use click on the "show more" link  -->
         {{#has_other_values}}
         <!-- "show more" link -->
-        <li class="show-more"><a href="#" onclick="showMoreLess(this); return false;"><i class="glyphicon glyphicon-chevron-down" /> more</a></li>
+        <li class="show-more"><a href="#"><i class="glyphicon glyphicon-chevron-down" /> more</a></li>
 
         <!-- other values -->
         {{#other_values}}
@@ -119,7 +119,7 @@
         {{/other_values}}
 
         <!-- "show less" link -->
-        <li class="show-less" onclick="showMoreLess(this); return false;"><a href=""><i class="glyphicon glyphicon-chevron-up" /> less</a></li>
+        <li class="show-less"><a href="#"><i class="glyphicon glyphicon-chevron-up" /> less</a></li>
         {{/has_other_values}}
       </ul>
     </div>

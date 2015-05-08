@@ -95,7 +95,7 @@ $(document).ready(function() {
     if (content.hits.length === 0) hitsHtml = '<p id="no-hits">We didn\'t find any products for your search.</p>';
     $hits.html(hitsHtml);
   }
-  
+
   function renderFacets(content, state) {
     // If no results
     if (content.hits.length === 0) {
@@ -202,17 +202,21 @@ $(document).ready(function() {
     e.preventDefault();
     $(this).closest('ul').find('.show-more').toggle();
     $(this).closest('ul').find('.show-less').toggle();
+    return false;
   });
   $(document).on('click','.toggleRefine',function() {
     helper.toggleRefine($(this).data('facet'), $(this).data('value')).search();
+    return false;
   });
   $(document).on('click','.gotoPage',function() {
     helper.setCurrentPage(+$(this).data('page') - 1).search();
-    window.scrollTo(0, 0);
+    $("html, body").animate({scrollTop:0}, '500', 'swing');
+    return false;
   });
   $(document).on('click','.sortBy',function() {
     $(this).closest('.btn-group').find('.sort-by').text($(this).text());
     helper.setIndex(INDEX_NAME + $(this).data('index-suffix')).search();
+    return false;
   });
   $(document).on('click','#input-loop',function() {
     $inputField.val('').change();

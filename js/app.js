@@ -277,7 +277,7 @@ $(document).ready(function() {
       var sParameterName = sURLVariables[i].split('=');
       var facet = decodeURIComponent(sParameterName[0]);
       var value = decodeURIComponent(sParameterName[1]);
-      helper.toggleRefine(facets, value, false);
+      helper.toggleRefine(facet, value, false);
     }
     // Page has to be set in the end to avoid being overwritten
     var page = decodeURIComponent(sURLVariables[1].split('=')[1])-1;

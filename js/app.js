@@ -21,7 +21,7 @@ $(document).ready(function() {
   // END REPLACE
 
   // DOM binding
-  var $inputField = $('#q');
+  var $input = $('#q');
   var $hits = $('#hits');
   var $stats = $('#stats');
   var $facets = $('#facets');
@@ -47,15 +47,15 @@ $(document).ready(function() {
   var helper = algoliasearchHelper(algolia, INDEX_NAME, params);
 
   // Input binding
-  $inputField.on('keyup change', function() {
-    var query = $inputField.val();
+  $input.on('keyup change', function() {
+    var query = $input.val();
     toggleIconEmptyInput(!query.trim());
     helper.setQuery(query).search();
   }).focus();
 
   // AlgoliaHelper events
   helper.on('change', function(state) {
-    setURLParams(state);
+    setURL(state);
   });
   helper.on('error', function(error) {
     console.log(error);
@@ -74,14 +74,12 @@ $(document).ready(function() {
   * ***********/
 
   // Initial search
-  initWithUrlParams();
-  helper.search();
-
+  init();
 
   function renderStats(content) {
     var stats =  {
-      nbHits: numberWithDelimiter(content.nbHits),
-      processingTimeMS: content.processingTimeMS,
+      nbHits: content.nbHits.toLocaleString(),
+      processingTimeMS: content.processingTimeMS.toLocaleString(),
       nbHits_plural: content.nbHits !== 1
     };
     $stats.html(statsTemplate.render(stats));
@@ -97,59 +95,46 @@ $(document).ready(function() {
   }
 
   function renderFacets(content, state) {
-    // If no results
-    if (content.hits.length === 0) {
-      $facets.empty();
-      return;
+    var facets = [];
+    for (var i = 0; i < FACET_CONFIG.length; ++i) {
+      var facet = FACET_CONFIG[i];
+      var result = content.getFacetByName(facet.name);
+      if (!result) { continue; }
+
+      facet.values = [];
+
+      if (facet.type === 'slider') {
+        facet.min = 0;
+        facet.max = result.stats.max;
+        var min = state.getNumericRefinement(facet.name, '>=') || result.stats.min;
+        var max = state.getNumericRefinement(facet.name, '<=') || result.stats.max;
+        min = Math.min(facet.max, Math.max(facet.min, min));
+        max = Math.min(facet.max, Math.max(facet.min, max));
+        facet.values = [min, max];
+      } else {
+        // format and sort the facet values
+        for (var v in result.data) {
+          facet.values.push({ value: v, count: result.data[v].toLocaleString(), refined: helper.isRefined(facet.name, v) });
+        }
+        var sortFunction = facet.sortFunction || sortByCountDesc;
+        if (facet.topListIfRefined) { sortFunction = sortByRefined(sortFunction); }
+        facet.values.sort(sortFunction);
+      }
+      facet.more = facet.values.length > 9;
+      facets.push(facet);
     }
 
-    // Process facets
-    var facets = [];
-    for (var facetIndex = 0; facetIndex < FACET_CONFIG.length; ++facetIndex) {
-      var facetParams = FACET_CONFIG[facetIndex];
-      var facetResult = content.getFacetByName(facetParams.name);
-      if (facetResult) {
-        var facetContent = {};
-        facetContent.facet = facetParams.name;
-        facetContent.title = facetParams.title;
-        facetContent.type = facetParams.type;
-
-        if (facetParams.type === 'slider') {
-          // if the facet is a slider
-          facetContent.min = facetResult.stats.min;
-          facetContent.max = facetResult.stats.max;
-          var valueMin = state.getNumericRefinement(facetParams.name, '>=') || facetResult.stats.min;
-          var valueMax = state.getNumericRefinement(facetParams.name, '<=') || facetResult.stats.max;
-          valueMin = Math.min(facetContent.max, Math.max(facetContent.min, valueMin));
-          valueMax = Math.min(facetContent.max, Math.max(facetContent.min, valueMax));
-          facetContent.values = [valueMin, valueMax];
-        } else {
-          // format and sort the facet values
-          var values = [];
-          for (var v in facetResult.data) {
-            values.push({ label: v, value: v, count: facetResult.data[v], refined: helper.isRefined(facetParams.name, v) });
-          }
-          var sortFunction = facetParams.sortFunction || sortByCountDesc;
-          if (facetParams.topListIfRefined) sortFunction = sortByRefined(sortFunction);
-          values.sort(sortFunction);
-
-          facetContent.values = values.slice(0, 10);
-          facetContent.has_other_values = values.length > 10;
-          facetContent.other_values = values.slice(10);
-          facetContent.disjunctive = facetParams.disjunctive;
-
-        }
-        facets.push(facetContent);
+    // Display facets
+    var html = '';
+    for (var i = 0; i < facets.length; ++i) {
+      var facet = facets[i];
+      if (facet.type && facet.type === 'slider') {
+        html += sliderTemplate.render(facet);
+      } else {
+        html += facetTemplate.render(facet);
       }
     }
-    // Display facets
-    var facetsHtml = '';
-    for (var indexFacet = 0; indexFacet < facets.length; ++indexFacet) {
-      var facet = facets[indexFacet];
-      if (facet.type && facet.type === 'slider') facetsHtml += sliderTemplate.render(facet);
-      else facetsHtml += facetTemplate.render(facet);
-    }
-    $facets.html(facetsHtml);
+    $facets.html(html);
   }
 
   function renderPagination(content) {
@@ -198,13 +183,21 @@ $(document).ready(function() {
   }
 
   // Click binding
-  $(document).on('click','.show-more, .show-less',function(e) {
+  $(document).on('click','#facets .toggle',function(e) {
     e.preventDefault();
-    $(this).closest('ul').find('.show-more').toggle();
-    $(this).closest('ul').find('.show-less').toggle();
+    var $ul = $(this).closest('ul');
+    $ul.toggleClass('open');
+    var $li = $ul.find('.toggle');
+    if ( $ul.hasClass('open') ) {
+      $li.find('.glyphicon').attr('class', 'glyphicon glyphicon-chevron-up');
+      $li.find('span').text('less');
+    } else {
+      $li.find('.glyphicon').attr('class', 'glyphicon glyphicon-chevron-down');
+      $li.find('span').text('more');
+    }
     return false;
   });
-  $(document).on('click','.toggleRefine',function() {
+  $(document).on('click','#facets [data-facet]',function() {
     helper.toggleRefine($(this).data('facet'), $(this).data('value')).search();
     return false;
   });
@@ -219,17 +212,17 @@ $(document).ready(function() {
     return false;
   });
   $(document).on('click','#input-loop',function() {
-    $inputField.val('').change();
+    $input.val('').change();
   });
 
   // Dynamic styles
-  $('#facets').on("mouseenter mouseleave", ".button-checkbox", function(e){
-    $(this).parent().find('.facet_link').toggleClass("hover");
-  });
-  $('#facets').on("mouseenter mouseleave", ".facet_link", function(e){
-    $(this).parent().find('.button-checkbox button.btn').toggleClass("hover");
+  $('#facets').on("mouseenter mouseleave", ".button-checkbox", function(e) {
+    $(this).parent().find('.link').toggleClass("hover");
   });
 
+  $('#facets').on("mouseenter mouseleave", ".link", function(e) {
+    $(this).parent().find('.button-checkbox button.btn').toggleClass("hover");
+  });
 
   /************
   * HELPERS
@@ -245,17 +238,15 @@ $(document).ready(function() {
       $('#input-loop').addClass('glyphicon-remove');
     }
   }
-  function numberWithDelimiter(number, delimiter) {
-    number = number + '';
-    delimiter = delimiter || ',';
-    var split = number.split('.');
-    split[0] = split[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + delimiter);
-    return split.join('.');
-  }
-  var sortByCountDesc = function sortByCountDesc (a, b) { return b.count - a.count; };
+
+  var sortByCountDesc = function sortByCountDesc (a, b) {
+    return b.count - a.count;
+  };
+
   var sortByName = function sortByName (a, b) {
     return a.value.localeCompare(b.value);
   };
+
   var sortByRefined = function sortByRefined (sortFunction) {
     return function (a, b) {
       if (a.refined !== b.refined) {
@@ -265,41 +256,40 @@ $(document).ready(function() {
       return sortFunction(a, b);
     };
   };
-  function initWithUrlParams() {
-    var sPageURL = location.hash;
-    if (!sPageURL || sPageURL.length === 0) { return true; }
-    var sURLVariables = sPageURL.split('&');
-    if (!sURLVariables || sURLVariables.length === 0) { return true; }
-    var query = decodeURIComponent(sURLVariables[0].split('=')[1]);
-    $inputField.val(query);
-    helper.setQuery(query);
-    for (var i = 2; i < sURLVariables.length; i++) {
-      var sParameterName = sURLVariables[i].split('=');
-      var facet = decodeURIComponent(sParameterName[0]);
-      var value = decodeURIComponent(sParameterName[1]);
-      helper.toggleRefine(facet, value, false);
-    }
-    // Page has to be set in the end to avoid being overwritten
-    var page = decodeURIComponent(sURLVariables[1].split('=')[1])-1;
-    helper.setCurrentPage(page);
 
-  }
-  function setURLParams(state) {
-    var urlParams = '#';
+  function setURL(state) {
+    var hash = '#';
     var currentQuery = state.query;
-    urlParams += 'q=' + encodeURIComponent(currentQuery);
-    var currentPage = state.page+1;
-    urlParams += '&page=' + currentPage;
+    hash += 'q=' + encodeURIComponent(currentQuery);
+    hash += '&page=' + (state.page + 1);
     for (var facetRefine in state.facetsRefinements) {
-      urlParams += '&' + encodeURIComponent(facetRefine) + '=' + encodeURIComponent(state.facetsRefinements[facetRefine]);
+      hash += '&' + encodeURIComponent(facetRefine) + '=' + encodeURIComponent(state.facetsRefinements[facetRefine]);
     }
     for (var disjunctiveFacetrefine in state.disjunctiveFacetsRefinements) {
       for (var value in state.disjunctiveFacetsRefinements[disjunctiveFacetrefine]) {
-        urlParams += '&' + encodeURIComponent(disjunctiveFacetrefine) + '=' + encodeURIComponent(state.disjunctiveFacetsRefinements[disjunctiveFacetrefine][value]);
+        hash += '&' + encodeURIComponent(disjunctiveFacetrefine) + '=' + encodeURIComponent(state.disjunctiveFacetsRefinements[disjunctiveFacetrefine][value]);
       }
     }
-    location.replace(urlParams);
+    location.replace(hash);
   }
 
+  function init() {
+    var params = location.hash.split('&');
+    var query = decodeURIComponent(params[0].split('=')[1] || '');
+    $input.val(query);
+    helper.setQuery(query);
+    for (var i = 2; i < params.length; i++) {
+      var param = params[i].split('=');
+      var facet = decodeURIComponent(param[0]);
+      var value = decodeURIComponent(param[1]);
+      helper.toggleRefine(facet, value, false);
+    }
+    // Page has to be set in the end to avoid being overwritten
+    if (params[1]) {
+      var page = decodeURIComponent(params[1].split('=')[1]) - 1;
+      helper.setCurrentPage(page);
+    }
+    helper.search();
+  }
 });
 

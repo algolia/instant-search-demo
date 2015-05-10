@@ -92,35 +92,18 @@
         <h5>{{ title }}</h5>
       </div>
       <ul class="list-unstyled">
-
         {{#values}}
         <li class="{{#refined}}refined{{/refined}}">
+          <small class="text-muted pull-right">{{ count }}</small>
           {{#disjunctive}}
-          <input class="checkbox toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
+          <input class="checkbox" data-facet="{{ name }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
           {{/disjunctive}}
-          <a class="facet_link toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" href="#">{{ label }}</a>
-          <small class="facet_count text-muted pull-right">{{ count }}</small>
+          <a class="link" data-facet="{{ name }}" data-value="{{ value }}" href="#">{{ value }}</a>
         </li>
         {{/values}}
-
-        <!-- other values will only be displayed if the use click on the "show more" link  -->
-        {{#has_other_values}}
-        <!-- "show more" link -->
-        <li class="show-more"><a href="#"><i class="glyphicon glyphicon-chevron-down" /> more</a></li>
-
-        <!-- other values -->
-        {{#other_values}}
-        <li class="{{#refined}}refined{{/refined}} additional-facets show-more">
-          {{#disjunctive}}
-          <input class="checkbox toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
-          {{/disjunctive}}
-          <a class="facet_link toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" href="#">{{ label }}</a><small class="text-muted pull-right">{{ count }}</small>
-        </li>
-        {{/other_values}}
-
-        <!-- "show less" link -->
-        <li class="show-less"><a href="#"><i class="glyphicon glyphicon-chevron-up" /> less</a></li>
-        {{/has_other_values}}
+        {{#more}}
+        <li class="toggle"><a href="#"><i class="glyphicon glyphicon-chevron-down" /> <span>more</span> </a></li>
+        {{/more}}
       </ul>
     </div>
   </script>
@@ -134,7 +117,7 @@
         </div>
         <li class="facet-slider">
           <b>{{ min }}</b>
-          <input type="text" data-slider-min="{{ min }}" data-slider-max="{{ max }}" data-slider-step="1" data-slider-value="[{{ values }}]" data-slider-orientation="horizontal" data-slider-selection="after" id="{{ facet }}-slider" />
+          <input type="text" data-slider-min="{{ min }}" data-slider-max="{{ max }}" data-slider-step="1" data-slider-value="[{{ values }}]" data-slider-orientation="horizontal" data-slider-selection="after" id="{{ name }}-slider" />
           <b>{{ max }}</b>
         </li>
       </ul>

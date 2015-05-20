@@ -47,7 +47,7 @@ $(document).ready(function() {
   var helper = algoliasearchHelper(algolia, INDEX_NAME, params);
 
   // Input binding
-  $inputField.on('keyup change', function() {
+  $inputField.on('keyup', function() {
     var query = $inputField.val();
     toggleIconEmptyInput(!query.trim());
     helper.setQuery(query).search();
@@ -219,7 +219,7 @@ $(document).ready(function() {
     return false;
   });
   $(document).on('click','#input-loop',function() {
-    $inputField.val('').change();
+    $inputField.val('').keyup();
   });
 
   // Dynamic styles

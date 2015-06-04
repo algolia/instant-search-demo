@@ -46,19 +46,13 @@ $(document).ready(function() {
   };
   var helper = algoliasearchHelper(algolia, INDEX_NAME, params);
 
-  function doSearch() {
-    var query = $inputField.val();
-    toggleIconEmptyInput(!query.trim());
-    helper.setQuery(query).search();
-  }
-
-  // we do not want search to be called more than once
-  // every 100ms, better performance on mobile especially
-  var debouncedSearch = $.debounce(100, true, doSearch);
-
   // Input binding
   $inputField
-    .on('keyup', debouncedSearch)
+    .on('keyup', function() {
+      var query = $inputField.val();
+      toggleIconEmptyInput(!query.trim());
+      helper.setQuery(query).search();
+    })
     .focus();
 
   // AlgoliaHelper events
@@ -76,7 +70,6 @@ $(document).ready(function() {
     bindSearchObjects();
   });
 
-
   /************
   * SEARCH
   * ***********/
@@ -86,7 +79,7 @@ $(document).ready(function() {
   helper.search();
 
   function renderStats(content) {
-    var stats =  {
+    var stats = {
       nbHits: numberWithDelimiter(content.nbHits),
       processingTimeMS: content.processingTimeMS,
       nbHits_plural: content.nbHits !== 1
@@ -182,7 +175,7 @@ $(document).ready(function() {
       if (p < 0 || p >= content.nbPages) {
         continue;
       }
-      pages.push({ current: content.page === p, number: (p + 1) });
+      pages.push({ current: content.page === p, number: p + 1 });
     }
     if (content.page + 5 < content.nbPages) {
       pages.push({ current: false, number: '...', disabled: true });
@@ -208,36 +201,36 @@ $(document).ready(function() {
   }
 
   // Click binding
-  $(document).on('click','.show-more, .show-less',function(e) {
+  $(document).on('click', '.show-more, .show-less', function(e) {
     e.preventDefault();
     $(this).closest('ul').find('.show-more').toggle();
     $(this).closest('ul').find('.show-less').toggle();
     return false;
   });
-  $(document).on('click','.toggleRefine',function() {
+  $(document).on('click', '.toggleRefine', function() {
     helper.toggleRefine($(this).data('facet'), $(this).data('value')).search();
     return false;
   });
-  $(document).on('click','.gotoPage',function() {
+  $(document).on('click', '.gotoPage', function() {
     helper.setCurrentPage(+$(this).data('page') - 1).search();
-    $("html, body").animate({scrollTop:0}, '500', 'swing');
+    $('html, body').animate({scrollTop:0}, '500', 'swing');
     return false;
   });
-  $(document).on('click','.sortBy',function() {
+  $(document).on('click', '.sortBy',function() {
     $(this).closest('.btn-group').find('.sort-by').text($(this).text());
     helper.setIndex(INDEX_NAME + $(this).data('index-suffix')).search();
     return false;
   });
-  $(document).on('click','#input-loop',function() {
+  $(document).on('click', '#input-loop',function() {
     $inputField.val('').keyup();
   });
 
   // Dynamic styles
-  $('#facets').on("mouseenter mouseleave", ".button-checkbox", function(e){
-    $(this).parent().find('.facet_link').toggleClass("hover");
+  $('#facets').on('mouseenter mouseleave', '.button-checkbox', function(){
+    $(this).parent().find('.facet_link').toggleClass('hover');
   });
-  $('#facets').on("mouseenter mouseleave", ".facet_link", function(e){
-    $(this).parent().find('.button-checkbox button.btn').toggleClass("hover");
+  $('#facets').on('mouseenter mouseleave', '.facet_link', function(){
+    $(this).parent().find('.button-checkbox button.btn').toggleClass('hover');
   });
 
 
@@ -247,12 +240,13 @@ $(document).ready(function() {
 
   function toggleIconEmptyInput(isEmpty) {
     if(isEmpty) {
-      $('#input-loop').addClass('glyphicon-loop');
-      $('#input-loop').removeClass('glyphicon-remove');
-    }
-    else {
-      $('#input-loop').removeClass('glyphicon-loop');
-      $('#input-loop').addClass('glyphicon-remove');
+      $('#input-loop')
+        .addClass('glyphicon-loop')
+        .removeClass('glyphicon-remove');
+    } else {
+      $('#input-loop')
+        .removeClass('glyphicon-loop')
+        .addClass('glyphicon-remove');
     }
   }
   function numberWithDelimiter(number, delimiter) {
@@ -262,11 +256,13 @@ $(document).ready(function() {
     split[0] = split[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + delimiter);
     return split.join('.');
   }
-  var sortByCountDesc = function sortByCountDesc (a, b) { return b.count - a.count; };
-  var sortByName = function sortByName (a, b) {
+  function sortByCountDesc (a, b) {
+    return b.count - a.count;
+  }
+  function sortByName (a, b) {
     return a.value.localeCompare(b.value);
-  };
-  var sortByRefined = function sortByRefined (sortFunction) {
+  }
+  function sortByRefined (sortFunction) {
     return function (a, b) {
       if (a.refined !== b.refined) {
         if (a.refined) return -1;
@@ -274,12 +270,16 @@ $(document).ready(function() {
       }
       return sortFunction(a, b);
     };
-  };
+  }
   function initWithUrlParams() {
     var sPageURL = location.hash;
-    if (!sPageURL || sPageURL.length === 0) { return true; }
+    if (!sPageURL || sPageURL.length === 0) {
+      return true;
+    }
     var sURLVariables = sPageURL.split('&');
-    if (!sURLVariables || sURLVariables.length === 0) { return true; }
+    if (!sURLVariables || sURLVariables.length === 0) {
+      return true;
+    }
     var query = decodeURIComponent(sURLVariables[0].split('=')[1]);
     $inputField.val(query);
     helper.setQuery(query);
@@ -290,15 +290,15 @@ $(document).ready(function() {
       helper.toggleRefine(facet, value, false);
     }
     // Page has to be set in the end to avoid being overwritten
-    var page = decodeURIComponent(sURLVariables[1].split('=')[1])-1;
+    var page = decodeURIComponent(sURLVariables[1].split('=')[1]) -1;
     helper.setCurrentPage(page);
-
   }
+
   function setURLParams(state) {
     var urlParams = '#';
     var currentQuery = state.query;
     urlParams += 'q=' + encodeURIComponent(currentQuery);
-    var currentPage = state.page+1;
+    var currentPage = state.page + 1;
     urlParams += '&page=' + currentPage;
     for (var facetRefine in state.facetsRefinements) {
       urlParams += '&' + encodeURIComponent(facetRefine) + '=' + encodeURIComponent(state.facetsRefinements[facetRefine]);

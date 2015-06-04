@@ -68,6 +68,38 @@ p.main-caption_text {
 }
 /* /Sort */
 
+/* Custom checkboxes */
+.checkbox-hidden {
+  display:none;
+}
+.checkbox-label {
+  cursor:pointer;
+}
+.checkbox-hidden + .checkbox-label {
+  margin-left: 25px;
+  position:relative;
+  font-weight:normal;
+}
+.checkbox-hidden + .checkbox-label:before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:-20px;
+  width:16px;
+  height:16px;
+  background:url(../img/icons.png) -23px 2px no-repeat;
+}
+.checkbox-hidden + .checkbox-label:hover:before {
+  background-position:-23px -22px;
+}
+.checkbox-hidden:checked + .checkbox-label:hover:before {
+  background-position:1px -21px;
+}
+.checkbox-hidden:checked + .checkbox-label:before {
+  background-position:1px 3px;
+}
+
+
 /* Footer */
 footer.well {
 	background-color: white;

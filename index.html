@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Instant Search Demo</title>
-  <!-- Includes Bootstrap 3.2.0, bootstrap-slider & bootstrap-checkbox -->
+  <!-- Includes Bootstrap 3.2.0, bootstrap-slider -->
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
@@ -96,9 +96,9 @@
         {{#values}}
         <li class="{{#refined}}refined{{/refined}}">
           {{#disjunctive}}
-          <input class="checkbox toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
+          <input id="{{ id }}" class="checkbox-hidden" data-facet="{{ facet }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
           {{/disjunctive}}
-          <a class="facet_link toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" href="#">{{ label }}</a>
+          <label class="facet_link toggleRefine {{#disjunctive}}checkbox-label{{/disjunctive}}" for="{{ id }}" data-facet="{{ facet }}" data-value="{{ value }}">{{ label }}</label>
           <small class="facet_count text-muted pull-right">{{ count }}</small>
         </li>
         {{/values}}
@@ -112,9 +112,10 @@
         {{#other_values}}
         <li class="{{#refined}}refined{{/refined}} additional-facets show-more">
           {{#disjunctive}}
-          <input class="checkbox toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
+          <input id="{{ id }}" class="checkbox-hidden" data-facet="{{ facet }}" data-value="{{ value }}" type="checkbox" {{#refined}}checked="checked"{{/refined}}>
           {{/disjunctive}}
-          <a class="facet_link toggleRefine" data-facet="{{ facet }}" data-value="{{ value }}" href="#">{{ label }}</a><small class="text-muted pull-right">{{ count }}</small>
+          <label class="facet_link toggleRefine {{#disjunctive}}checkbox-label{{/disjunctive}}" data-facet="{{ facet }}" data-value="{{ value }}">{{ label }}</label>
+          <small class="text-muted pull-right">{{ count }}</small>
         </li>
         {{/other_values}}
 
@@ -194,7 +195,6 @@
   <script src="//cdn.jsdelivr.net/algoliasearch.helper/2/algoliasearch.helper.min.js"></script>
   <script src="//cdn.jsdelivr.net/hogan.js/3.0.0/hogan.common.js"></script>
   <script src="js/bootstrap-slider.js"></script>
-  <script src="js/bootstrap-checkbox.js"></script>
   <!-- /Dependencies -->
   <script src="js/app.js"></script>
 </body>

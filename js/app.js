@@ -127,7 +127,13 @@ $(document).ready(function() {
           // format and sort the facet values
           var values = [];
           for (var v in facetResult.data) {
-            values.push({ label: v, value: v, count: facetResult.data[v], refined: helper.isRefined(facetParams.name, v) });
+            values.push({
+              label: v,
+              value: v,
+              id: getUniqueId(),
+              count: facetResult.data[v],
+              refined: helper.isRefined(facetParams.name, v)
+            });
           }
           var sortFunction = facetParams.sortFunction || sortByCountDesc;
           if (facetParams.topListIfRefined) sortFunction = sortByRefined(sortFunction);
@@ -192,9 +198,6 @@ $(document).ready(function() {
       helper.addNumericRefinement('customerReviewCount', '>=', ev.value[0]).search();
       helper.addNumericRefinement('customerReviewCount', '<=', ev.value[1]).search();
     });
-
-    // Pimp checkboxes
-    $('input[type="checkbox"]').checkbox();
   }
 
   // Click binding
@@ -299,6 +302,11 @@ $(document).ready(function() {
       }
     }
     location.replace(urlParams);
+  }
+
+  var uniqueId = 0;
+  function getUniqueId() {
+    return 'uniqueId_' + (++uniqueId);
   }
 
 });

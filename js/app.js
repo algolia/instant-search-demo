@@ -55,10 +55,10 @@ $(document).ready(function() {
     })
     .focus();
 
-  // AlgoliaHelper events
-  helper.on('change', function(state) {
-    setURLParams(state);
-  });
+
+  helper.on('change', setURLParams);
+
+
   helper.on('error', function(error) {
     console.log(error);
   });
@@ -183,8 +183,8 @@ $(document).ready(function() {
     }
     var pagination = {
       pages: pages,
-      prev_page: (content.page > 0 ? content.page : false),
-      next_page: (content.page + 1 < content.nbPages ? content.page + 2 : false)
+      prev_page: content.page > 0 ? content.page : false,
+      next_page: content.page + 1 < content.nbPages ? content.page + 2 : false
     };
     // Display pagination
     $pagination.html(paginationTemplate.render(pagination));
@@ -315,6 +315,4 @@ $(document).ready(function() {
   function getUniqueId() {
     return 'uniqueId_' + (++uniqueId);
   }
-
 });
-

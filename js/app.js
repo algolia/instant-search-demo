@@ -46,12 +46,20 @@ $(document).ready(function() {
   };
   var helper = algoliasearchHelper(algolia, INDEX_NAME, params);
 
-  // Input binding
-  $inputField.on('keyup', function() {
+  function doSearch() {
     var query = $inputField.val();
     toggleIconEmptyInput(!query.trim());
     helper.setQuery(query).search();
-  }).focus();
+  }
+
+  // we do not want search to be called more than once
+  // every 100ms, better performance on mobile especially
+  var debouncedSearch = $.debounce(100, true, doSearch);
+
+  // Input binding
+  $inputField
+    .on('keyup', debouncedSearch)
+    .focus();
 
   // AlgoliaHelper events
   helper.on('change', function(state) {
@@ -76,7 +84,6 @@ $(document).ready(function() {
   // Initial search
   initWithUrlParams();
   helper.search();
-
 
   function renderStats(content) {
     var stats =  {

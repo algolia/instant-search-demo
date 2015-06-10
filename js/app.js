@@ -221,7 +221,7 @@ $(document).ready(function() {
     helper.setIndex(INDEX_NAME + $(this).data('index-suffix')).search();
     return false;
   });
-  $(document).on('click', '#input-loop',function() {
+  $(document).on('click', '#input-search',function() {
     $inputField.val('').keyup();
   });
 
@@ -240,12 +240,12 @@ $(document).ready(function() {
 
   function toggleIconEmptyInput(isEmpty) {
     if(isEmpty) {
-      $('#input-loop')
-        .addClass('glyphicon-loop')
+      $('#input-search')
+        .addClass('glyphicon-search')
         .removeClass('glyphicon-remove');
     } else {
-      $('#input-loop')
-        .removeClass('glyphicon-loop')
+      $('#input-search')
+        .removeClass('glyphicon-search')
         .addClass('glyphicon-remove');
     }
   }

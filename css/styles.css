@@ -147,6 +147,9 @@ p#no-hits {
     #search_input span.input-group-addon { font-size: 21px }
     #search_input input#q { font-size: 32px }
 }
+#input-search {
+  cursor: pointer;
+}
 
 /* CAPTION */
 .main_caption { margin-bottom: 30px }

@@ -35,7 +35,8 @@ header { margin-top: 40px }
 #facets .additional-facets,
 #facets .show-less { display: none }
 #facets .facet-slider { margin: 10px 0 20px }
-#facets .facet-slider .slider { margin: 0 10px }
+#facets .facet-slider .slider-wrapper { display:inline-block;padding: 0 10px;width: 81%; }
+#facets .facet-slider .slider { width: 100%; }
 #facets .facet-slider .slider .slider-selection { background: #FDDED9 }
 #facets .facet-slider .slider .slider-handle {
   background: #F6624E;

@@ -3,7 +3,6 @@ html {
 }
 
 /* HEADER */
-
 .page-header {
   padding-bottom: 2px;
   margin: 16px 0 8px;
@@ -151,7 +150,7 @@ p#no-hits {
     #search_input span.input-group-addon { font-size: 21px }
     #search_input input#q { font-size: 32px }
 }
-#input-search {
+#input-search.glyphicon-remove {
   cursor: pointer;
 }
 

@@ -63,6 +63,10 @@ $(document).ready(function() {
     console.log(error);
   });
   helper.on('result', function(content, state) {
+    if (content.query !== $inputField.val()) {
+      // do not take out-dated answers into account
+      return;
+    }
     renderStats(content);
     renderHits(content);
     renderFacets(content, state);

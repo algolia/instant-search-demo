@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>remove-hover</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="remove-hover" sketch:type="MSLayerGroup" transform="translate(-0.844727, -0.860352)" fill="#999999">
+            <path d="M17.3447266,15.2390313 L13.1020859,10.9963906 L10.9807656,13.1177109 L15.2234063,17.3603516 L10.9807656,21.6029923 L13.1020859,23.7243126 L17.3447266,19.4816719 L21.5873673,23.7243126 L23.7086876,21.6029923 L19.4660469,17.3603516 L23.7086876,13.1177109 L21.5873673,10.9963906 L17.3447266,15.2390313 L17.3447266,15.2390313 Z M16.8447266,32.8603516 C25.6812826,32.8603516 32.8447266,25.6969076 32.8447266,16.8603516 C32.8447266,8.02379556 25.6812826,0.860351562 16.8447266,0.860351562 C8.00817056,0.860351562 0.844726562,8.02379556 0.844726562,16.8603516 C0.844726562,25.6969076 8.00817056,32.8603516 16.8447266,32.8603516 L16.8447266,32.8603516 Z" id="Oval" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>

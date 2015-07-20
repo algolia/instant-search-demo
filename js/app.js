@@ -17,29 +17,29 @@ $(document).ready(function() {
   };
   var FACETS_SLIDER = ['price'];
   var FACETS_ORDER_OF_DISPLAY = ['categories', 'brand', 'price', 'type'];
-  var FACETS_LABELS = { categories: 'Category', brand: 'Brand', price: 'Price', type: 'Type' };
+  var FACETS_LABELS = {categories: 'Category', brand: 'Brand', price: 'Price', type: 'Type'};
 
   // Client + Helper initialization
   var algolia = algoliasearch(APPLICATION_ID, SEARCH_ONLY_API_KEY);
   var algoliaHelper = algoliasearchHelper(algolia, INDEX_NAME, PARAMS);
 
   // DOM BINDING
-  $searchInput     = $('#search-input');
+  $searchInput = $('#search-input');
   $searchInputIcon = $('#search-input-icon');
-  $main            = $('main');
-  $sortBySelect    = $('#sort-by-select');
-  $hits            = $('#hits');
-  $stats           = $('#stats');
-  $facets          = $('#facets');
-  $pagination      = $('#pagination');
+  $main = $('main');
+  $sortBySelect = $('#sort-by-select');
+  $hits = $('#hits');
+  $stats = $('#stats');
+  $facets = $('#facets');
+  $pagination = $('#pagination');
 
   // Hogan templates binding
-  var hitTemplate        = Hogan.compile($('#hit-template').text());
-  var statsTemplate      = Hogan.compile($('#stats-template').text());
-  var facetTemplate      = Hogan.compile($('#facet-template').text());
-  var sliderTemplate     = Hogan.compile($('#slider-template').text());
+  var hitTemplate = Hogan.compile($('#hit-template').text());
+  var statsTemplate = Hogan.compile($('#stats-template').text());
+  var facetTemplate = Hogan.compile($('#facet-template').text());
+  var sliderTemplate = Hogan.compile($('#slider-template').text());
   var paginationTemplate = Hogan.compile($('#pagination-template').text());
-  var noResultsTemplate  = Hogan.compile($('#no-results-template').text());
+  var noResultsTemplate = Hogan.compile($('#no-results-template').text());
 
 
 
@@ -80,7 +80,7 @@ $(document).ready(function() {
 
   function renderStats(content) {
     var stats = {
-      nbHits: numberWithDelimiter(content.nbHits),
+      nbHits: content.nbHits,
       nbHits_plural: content.nbHits !== 1,
       processingTimeMS: content.processingTimeMS
     };
@@ -108,10 +108,10 @@ $(document).ready(function() {
         facetContent.min = facetResult.stats.min;
         facetContent.max = facetResult.stats.max;
         var from = state.getNumericRefinement(facetName, '>=') || facetContent.min;
-        var to   = state.getNumericRefinement(facetName, '<=') || facetContent.max;
+        var to = state.getNumericRefinement(facetName, '<=') || facetContent.max;
         facetContent.from = Math.min(facetContent.max, Math.max(facetContent.min, from));
-        facetContent.to   = Math.min(facetContent.max, Math.max(facetContent.min, to));
-        facetsHtml +=  sliderTemplate.render(facetContent);
+        facetContent.to = Math.min(facetContent.max, Math.max(facetContent.min, to));
+        facetsHtml += sliderTemplate.render(facetContent);
       }
 
       // Conjunctive + Disjunctive facets
@@ -142,18 +142,18 @@ $(document).ready(function() {
     // Bind Sliders
     for (facetIndex = 0; facetIndex < FACETS_SLIDER.length; ++facetIndex) {
       var facetName = FACETS_SLIDER[facetIndex];
-      var slider = $('#'+facetName+'-slider');
+      var slider = $('#' + facetName + '-slider');
       var sliderOptions = {
-        type: "double",
+        type: 'double',
         grid: true,
-        min:  slider.data('min'),
-        max:  slider.data('max'),
+        min: slider.data('min'),
+        max: slider.data('max'),
         from: slider.data('from'),
-        to:   slider.data('to'),
-        prettify: function (num) {
-          return '$' + parseInt(num);
+        to: slider.data('to'),
+        prettify: function(num) {
+          return '$' + parseInt(num, 10);
         },
-        onFinish: function (data) {
+        onFinish: function(data) {
           if (data.from !== (state.getNumericRefinement(facetName, '>=') || data.min)) {
             algoliaHelper.addNumericRefinement(facetName, '>=', data.from).search();
           }
@@ -169,16 +169,16 @@ $(document).ready(function() {
   function renderPagination(content) {
     var pages = [];
     if (content.page > 3) {
-      pages.push({ current: false, number: 1 });
-      pages.push({ current: false, number: '...', disabled: true });
+      pages.push({current: false, number: 1});
+      pages.push({current: false, number: '...', disabled: true});
     }
     for (var p = content.page - 3; p < content.page + 3; ++p) {
       if (p < 0 || p >= content.nbPages) continue;
-      pages.push({ current: content.page === p, number: p + 1 });
+      pages.push({current: content.page === p, number: p + 1});
     }
     if (content.page + 3 < content.nbPages) {
-      pages.push({ current: false, number: '...', disabled: true });
-      pages.push({ current: false, number: content.nbPages });
+      pages.push({current: false, number: '...', disabled: true});
+      pages.push({current: false, number: content.nbPages});
     }
     var pagination = {
       pages: pages,
@@ -188,35 +188,34 @@ $(document).ready(function() {
     $pagination.html(paginationTemplate.render(pagination));
   }
 
-
-
   // NO RESULTS
   // ==========
 
   function handleNoResults(content) {
-    if (content.nbHits>0) {
+    if (content.nbHits > 0) {
       $main.removeClass('no-results');
       return;
     }
     $main.addClass('no-results');
 
     var filters = [];
-    var i, j;
+    var i;
+    var j;
     for (i in algoliaHelper.state.facetsRefinements) {
       filters.push({
-        class: "toggle-refine",
+        class: 'toggle-refine',
         facet: i, facet_value: algoliaHelper.state.facetsRefinements[i],
-        label: FACETS_LABELS[i]+": ",
+        label: FACETS_LABELS[i] + ': ',
         label_value: algoliaHelper.state.facetsRefinements[i]
       });
     }
     for (i in algoliaHelper.state.disjunctiveFacetsRefinements) {
       for (j in algoliaHelper.state.disjunctiveFacetsRefinements[i]) {
         filters.push({
-          class: "toggle-refine",
+          class: 'toggle-refine',
           facet: i,
           facet_value: algoliaHelper.state.disjunctiveFacetsRefinements[i][j],
-          label: FACETS_LABELS[i]+": ",
+          label: FACETS_LABELS[i] + ': ',
           label_value: algoliaHelper.state.disjunctiveFacetsRefinements[i][j]
         });
       }
@@ -224,18 +223,16 @@ $(document).ready(function() {
     for (i in algoliaHelper.state.numericRefinements) {
       for (j in algoliaHelper.state.numericRefinements[i]) {
         filters.push({
-          class: "remove-numeric-refine",
+          class: 'remove-numeric-refine',
           facet: i,
           facet_value: j,
-          label: FACETS_LABELS[i]+" ",
-          label_value: j+" "+algoliaHelper.state.numericRefinements[i][j]
+          label: FACETS_LABELS[i] + ' ',
+          label_value: j + ' ' + algoliaHelper.state.numericRefinements[i][j]
         });
       }
     }
-    $hits.html(noResultsTemplate.render({ query: content.query, filters: filters }));
+    $hits.html(noResultsTemplate.render({query: content.query, filters: filters}));
   }
-
-
 
   // EVENTS BINDING
   // ==============
@@ -246,14 +243,14 @@ $(document).ready(function() {
   });
   $(document).on('click', '.go-to-page', function(e) {
     e.preventDefault();
-    $('html, body').animate({scrollTop:0}, '500', 'swing');
+    $('html, body').animate({scrollTop: 0}, '500', 'swing');
     algoliaHelper.setCurrentPage(+$(this).data('page') - 1).search();
   });
-  $sortBySelect.on('change',function(e) {
+  $sortBySelect.on('change', function(e) {
     e.preventDefault();
     algoliaHelper.setIndex(INDEX_NAME + $(this).val()).search();
   });
-  $searchInputIcon.on('click',function(e) {
+  $searchInputIcon.on('click', function(e) {
     e.preventDefault();
     $searchInput.val('').keyup().focus();
   });
@@ -278,17 +275,11 @@ $(document).ready(function() {
   // ==============
 
   function toggleIconEmptyInput(query) {
-    $searchInputIcon.toggleClass('empty', query.trim() !== "");
+    $searchInputIcon.toggleClass('empty', query.trim() !== '');
   }
-  function numberWithDelimiter(number, delimiter) {
-    number = number + '';
-    delimiter = delimiter || ',';
-    var split = number.split('.');
-    split[0] = split[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + delimiter);
-    return split.join('.');
-  }
-  function sortByRefined (sortFunction) {
-    return function (a, b) {
+
+  function sortByRefined(sortFunction) {
+    return function(a, b) {
       if (a.refined !== b.refined) {
         if (a.refined) return -1;
         if (b.refined) return 1;
@@ -296,11 +287,12 @@ $(document).ready(function() {
       return sortFunction(a, b);
     };
   }
-  function sortByCountDesc (a, b) {
+
+  function sortByCountDesc(a, b) {
     return b.count - a.count;
   }
-  function sortByName (a, b) {
+
+  function sortByName(a, b) {
     return a.value.localeCompare(b.value);
   }
 });
-

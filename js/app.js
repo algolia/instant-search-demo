@@ -24,14 +24,14 @@ $(document).ready(function() {
   var algoliaHelper = algoliasearchHelper(algolia, INDEX_NAME, PARAMS);
 
   // DOM BINDING
-  $searchInput = $('#search-input');
+  $searchInput     = $('#search-input');
   $searchInputIcon = $('#search-input-icon');
-  $main = $('main');
-  $sortBySelect = $('#sort-by-select');
-  $hits = $('#hits');
-  $stats = $('#stats');
-  $facets = $('#facets');
-  $pagination = $('#pagination');
+  $main            = $('main');
+  $sortBySelect    = $('#sort-by-select');
+  $hits            = $('#hits');
+  $stats           = $('#stats');
+  $facets          = $('#facets');
+  $pagination      = $('#pagination');
 
   // Hogan templates binding
   var hitTemplate        = Hogan.compile($('#hit-template').text());

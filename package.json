@@ -1,0 +1,21 @@
+{
+  "name": "instant-search-demo",
+  "version": "1.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/algolia/instant-search-demo.git"
+  },
+  "author": "Algolia team <support@algolia.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/algolia/instant-search-demo/issues"
+  },
+  "scripts": {
+    "dev": "browser-sync start --server . --files 'css/*,img/*,js/*,index.html' --no-open"
+  },
+  "homepage": "https://github.com/algolia/instant-search-demo#readme",
+  "dependencies": {
+    "browser-sync": "2.8.1"
+  }
+}

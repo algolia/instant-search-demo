@@ -28,7 +28,7 @@ We've included some credentials in the code allowing you to test the demo withou
 Then, you'll need to replace the demo credentials with your own:
 - in ```js/app.js```, set your own ```APPLICATION_ID``` instead of ```"latency"``` (which is our demo ```APPLICATION_ID```),
 - in ```js/app.js```, set your own ```SEARCH_ONLY_API_KEY``` instead of ```"6be0576ff61c053d5f9a3225e2a90f76"```,
-- in ```js/app.js```, set your own ```index``` name instead of ```"bestbuy"```.
+- in ```js/app.js```, set your own ```index``` name instead of ```"instant_search"```.
 
 
 ## Tutorial

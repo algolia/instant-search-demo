@@ -6,9 +6,9 @@ $(document).ready(function() {
   // ==============
 
   // Replace with your own values
-  var APPLICATION_ID = '65YSYSNYHU';
-  var SEARCH_ONLY_API_KEY = '0d356ed6cdf6bc50c6289fa51d48d77d';
-  var INDEX_NAME = 'bestbuy';
+  var APPLICATION_ID = 'latency';
+  var SEARCH_ONLY_API_KEY = '6be0576ff61c053d5f9a3225e2a90f76';
+  var INDEX_NAME = 'instant_search';
   var PARAMS = {
     hitsPerPage: 10,
     maxValuesPerFacet: 8,

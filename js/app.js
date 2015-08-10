@@ -1,269 +1,285 @@
 $(document).ready(function() {
 
-  /********************
-  * INITIALIZATION
-  * *******************/
 
-  // REPLACE WITH YOUR OWN VALUES
+
+  // INITIALIZATION
+  // ==============
+
+  // Replace with your own values
   var APPLICATION_ID = 'latency';
   var SEARCH_ONLY_API_KEY = '6be0576ff61c053d5f9a3225e2a90f76';
-  var INDEX_NAME = 'bestbuy';
-  var HITS_PER_PAGE = 10;
-  var FACET_CONFIG = [
-  { name: 'type', title: 'Type', disjunctive: false, sortFunction: sortByCountDesc },
-  { name: 'shipping', title: 'Shipping', disjunctive: false, sortFunction: sortByCountDesc },
-  { name: 'customerReviewCount', title: '# Reviews', disjunctive: true, type: 'slider' },
-  { name: 'category', title: 'Category', disjunctive: true, sortFunction: sortByCountDesc, topListIfRefined: true },
-  { name: 'salePrice_range', title: 'Price range', disjunctive: true, sortFunction: sortByName },
-  { name: 'manufacturer', title: 'Manufacturer', disjunctive: true, sortFunction: sortByName, topListIfRefined: true }
-  ];
-  var MAX_VALUES_PER_FACET = 30;
-  // END REPLACE
+  var INDEX_NAME = 'instant_search';
+  var PARAMS = {
+    hitsPerPage: 10,
+    maxValuesPerFacet: 8,
+    facets: ['type'],
+    disjunctiveFacets: ['categories', 'brand', 'price']
+  };
+  var FACETS_SLIDER = ['price'];
+  var FACETS_ORDER_OF_DISPLAY = ['categories', 'brand', 'price', 'type'];
+  var FACETS_LABELS = {categories: 'Category', brand: 'Brand', price: 'Price', type: 'Type'};
 
-  // DOM binding
-  var $inputField = $('#q');
-  var $hits = $('#hits');
-  var $stats = $('#stats');
-  var $facets = $('#facets');
-  var $pagination = $('#pagination');
+  // Client + Helper initialization
+  var algolia = algoliasearch(APPLICATION_ID, SEARCH_ONLY_API_KEY);
+  var algoliaHelper = algoliasearchHelper(algolia, INDEX_NAME, PARAMS);
 
-  // Templates binding
+  // DOM BINDING
+  $searchInput = $('#search-input');
+  $searchInputIcon = $('#search-input-icon');
+  $main = $('main');
+  $sortBySelect = $('#sort-by-select');
+  $hits = $('#hits');
+  $stats = $('#stats');
+  $facets = $('#facets');
+  $pagination = $('#pagination');
+
+  // Hogan templates binding
   var hitTemplate = Hogan.compile($('#hit-template').text());
   var statsTemplate = Hogan.compile($('#stats-template').text());
   var facetTemplate = Hogan.compile($('#facet-template').text());
   var sliderTemplate = Hogan.compile($('#slider-template').text());
   var paginationTemplate = Hogan.compile($('#pagination-template').text());
+  var noResultsTemplate = Hogan.compile($('#no-results-template').text());
 
-  // Client initialization
-  var algolia = algoliasearch(APPLICATION_ID, SEARCH_ONLY_API_KEY);
 
-  // Helper initialization
-  var params = {
-    hitsPerPage: HITS_PER_PAGE,
-    maxValuesPerFacet: MAX_VALUES_PER_FACET,
-    facets: $.map(FACET_CONFIG, function(facet) { return !facet.disjunctive ? facet.name : null; }),
-    disjunctiveFacets: $.map(FACET_CONFIG, function(facet) { return facet.disjunctive ? facet.name : null; })
-  };
-  var helper = algoliasearchHelper(algolia, INDEX_NAME, params);
+
+  // SEARCH BINDING
+  // ==============
 
   // Input binding
-  $inputField
-    .on('keyup', function() {
-      var query = $inputField.val();
-      toggleIconEmptyInput(!query.trim());
-      helper.setQuery(query).search();
-    })
-    .focus();
+  $searchInput
+  .on('keyup', function() {
+    var query = $(this).val();
+    toggleIconEmptyInput(query);
+    algoliaHelper.setQuery(query).search();
+  })
+  .focus();
 
-
-  helper.on('change', setURLParams);
-
-
-  helper.on('error', function(error) {
+  // Search errors
+  algoliaHelper.on('error', function(error) {
     console.log(error);
   });
-  helper.on('result', function(content, state) {
+
+  // Search results
+  algoliaHelper.on('result', function(content, state) {
     renderStats(content);
     renderHits(content);
     renderFacets(content, state);
+    bindSearchObjects(state);
     renderPagination(content);
-    bindSearchObjects();
+    handleNoResults(content);
   });
 
-  /************
-  * SEARCH
-  * ***********/
-
   // Initial search
-  initWithUrlParams();
-  helper.search();
+  algoliaHelper.search();
+
+
+
+  // RENDER SEARCH COMPONENTS
+  // ========================
 
   function renderStats(content) {
     var stats = {
-      nbHits: numberWithDelimiter(content.nbHits),
-      processingTimeMS: content.processingTimeMS,
-      nbHits_plural: content.nbHits !== 1
+      nbHits: content.nbHits,
+      nbHits_plural: content.nbHits !== 1,
+      processingTimeMS: content.processingTimeMS
     };
     $stats.html(statsTemplate.render(stats));
   }
 
   function renderHits(content) {
-    var hitsHtml = '';
-    for (var i = 0; i < content.hits.length; ++i) {
-      hitsHtml += hitTemplate.render(content.hits[i]);
-    }
-    if (content.hits.length === 0) hitsHtml = '<p id="no-hits">We didn\'t find any products for your search.</p>';
-    $hits.html(hitsHtml);
+    $hits.html(hitTemplate.render(content));
   }
 
   function renderFacets(content, state) {
-    // If no results
-    if (content.hits.length === 0) {
-      $facets.empty();
-      return;
-    }
-
-    // Process facets
-    var facets = [];
-    for (var facetIndex = 0; facetIndex < FACET_CONFIG.length; ++facetIndex) {
-      var facetParams = FACET_CONFIG[facetIndex];
-      var facetResult = content.getFacetByName(facetParams.name);
-      if (facetResult) {
-        var facetContent = {};
-        facetContent.facet = facetParams.name;
-        facetContent.title = facetParams.title;
-        facetContent.type = facetParams.type;
-
-        if (facetParams.type === 'slider') {
-          // if the facet is a slider
-          facetContent.min = facetResult.stats.min;
-          facetContent.max = facetResult.stats.max;
-          var valueMin = state.getNumericRefinement(facetParams.name, '>=') || facetResult.stats.min;
-          var valueMax = state.getNumericRefinement(facetParams.name, '<=') || facetResult.stats.max;
-          valueMin = Math.min(facetContent.max, Math.max(facetContent.min, valueMin));
-          valueMax = Math.min(facetContent.max, Math.max(facetContent.min, valueMax));
-          facetContent.values = [valueMin, valueMax];
-        } else {
-          // format and sort the facet values
-          var values = [];
-          for (var v in facetResult.data) {
-            values.push({
-              label: v,
-              value: v,
-              id: getUniqueId(),
-              count: facetResult.data[v],
-              refined: helper.isRefined(facetParams.name, v)
-            });
-          }
-          var sortFunction = facetParams.sortFunction || sortByCountDesc;
-          if (facetParams.topListIfRefined) sortFunction = sortByRefined(sortFunction);
-          values.sort(sortFunction);
-
-          facetContent.values = values.slice(0, 10);
-          facetContent.has_other_values = values.length > 10;
-          facetContent.other_values = values.slice(10);
-          facetContent.disjunctive = facetParams.disjunctive;
-
-        }
-        facets.push(facetContent);
-      }
-    }
-    // Display facets
     var facetsHtml = '';
-    for (var indexFacet = 0; indexFacet < facets.length; ++indexFacet) {
-      var facet = facets[indexFacet];
-      if (facet.type && facet.type === 'slider') facetsHtml += sliderTemplate.render(facet);
-      else facetsHtml += facetTemplate.render(facet);
+    for (var facetIndex = 0; facetIndex < FACETS_ORDER_OF_DISPLAY.length; ++facetIndex) {
+      var facetName = FACETS_ORDER_OF_DISPLAY[facetIndex];
+      var facetResult = content.getFacetByName(facetName);
+      if (!facetResult) continue;
+      var facetContent = {};
+
+      // Slider facets
+      if ($.inArray(facetName, FACETS_SLIDER) !== -1) {
+        facetContent = {
+          facet: facetName,
+          title: FACETS_LABELS[facetName]
+        };
+        facetContent.min = facetResult.stats.min;
+        facetContent.max = facetResult.stats.max;
+        var from = state.getNumericRefinement(facetName, '>=') || facetContent.min;
+        var to = state.getNumericRefinement(facetName, '<=') || facetContent.max;
+        facetContent.from = Math.min(facetContent.max, Math.max(facetContent.min, from));
+        facetContent.to = Math.min(facetContent.max, Math.max(facetContent.min, to));
+        facetsHtml += sliderTemplate.render(facetContent);
+      }
+
+      // Conjunctive + Disjunctive facets
+      else {
+        var values = [];
+        for (var value in facetResult.data) {
+          values.push({
+            label: value,
+            value: value,
+            count: facetResult.data[value],
+            refined: algoliaHelper.isRefined(facetName, value)
+          });
+        }
+        values.sort(sortByRefined(sortByCountDesc));
+        facetContent = {
+          facet: facetName,
+          title: FACETS_LABELS[facetName],
+          values: values,
+          disjunctive: $.inArray(facetName, PARAMS.disjunctiveFacets) !== -1
+        };
+        facetsHtml += facetTemplate.render(facetContent);
+      }
     }
     $facets.html(facetsHtml);
   }
 
-  function renderPagination(content) {
-    // If no results
-    if (content.hits.length === 0) {
-      $pagination.empty();
-      return;
+  function bindSearchObjects(state) {
+    // Bind Sliders
+    for (facetIndex = 0; facetIndex < FACETS_SLIDER.length; ++facetIndex) {
+      var facetName = FACETS_SLIDER[facetIndex];
+      var slider = $('#' + facetName + '-slider');
+      var sliderOptions = {
+        type: 'double',
+        grid: true,
+        min: slider.data('min'),
+        max: slider.data('max'),
+        from: slider.data('from'),
+        to: slider.data('to'),
+        prettify: function(num) {
+          return '$' + parseInt(num, 10);
+        },
+        onFinish: function(data) {
+          if (data.from !== (state.getNumericRefinement(facetName, '>=') || data.min)) {
+            algoliaHelper.addNumericRefinement(facetName, '>=', data.from).search();
+          }
+          if (data.to !== (state.getNumericRefinement(facetName, '<=') || data.max)) {
+            algoliaHelper.addNumericRefinement(facetName, '<=', data.to).search();
+          }
+        }
+      };
+      slider.ionRangeSlider(sliderOptions);
     }
+  }
 
-    // Process pagination
+  function renderPagination(content) {
     var pages = [];
-    if (content.page > 5) {
-      pages.push({ current: false, number: 1 });
-      pages.push({ current: false, number: '...', disabled: true });
+    if (content.page > 3) {
+      pages.push({current: false, number: 1});
+      pages.push({current: false, number: '...', disabled: true});
     }
-    for (var p = content.page - 5; p < content.page + 5; ++p) {
-      if (p < 0 || p >= content.nbPages) {
-        continue;
-      }
-      pages.push({ current: content.page === p, number: p + 1 });
+    for (var p = content.page - 3; p < content.page + 3; ++p) {
+      if (p < 0 || p >= content.nbPages) continue;
+      pages.push({current: content.page === p, number: p + 1});
     }
-    if (content.page + 5 < content.nbPages) {
-      pages.push({ current: false, number: '...', disabled: true });
-      pages.push({ current: false, number: content.nbPages });
+    if (content.page + 3 < content.nbPages) {
+      pages.push({current: false, number: '...', disabled: true});
+      pages.push({current: false, number: content.nbPages});
     }
     var pagination = {
       pages: pages,
       prev_page: content.page > 0 ? content.page : false,
       next_page: content.page + 1 < content.nbPages ? content.page + 2 : false
     };
-    // Display pagination
     $pagination.html(paginationTemplate.render(pagination));
   }
 
+  // NO RESULTS
+  // ==========
 
-  // Event bindings
-  function bindSearchObjects() {
-    // Slider binding
-    $('#customerReviewCount-slider').slider().on('slideStop', function(ev) {
-      helper.addNumericRefinement('customerReviewCount', '>=', ev.value[0]).search();
-      helper.addNumericRefinement('customerReviewCount', '<=', ev.value[1]).search();
-    });
-  }
-
-  // Click binding
-  $(document).on('click', '.show-more, .show-less', function(e) {
-    e.preventDefault();
-    $(this).closest('ul').find('.show-more').toggle();
-    $(this).closest('ul').find('.show-less').toggle();
-    return false;
-  });
-  $(document).on('click', '.toggleRefine', function() {
-    helper.toggleRefine($(this).data('facet'), $(this).data('value')).search();
-    return false;
-  });
-  $(document).on('click', '.gotoPage', function() {
-    helper.setCurrentPage(+$(this).data('page') - 1).search();
-    $('html, body').animate({scrollTop:0}, '500', 'swing');
-    return false;
-  });
-  $(document).on('click', '.sortBy',function() {
-    $(this).closest('.btn-group').find('.sort-by').text($(this).text());
-    helper.setIndex(INDEX_NAME + $(this).data('index-suffix')).search();
-    return false;
-  });
-  $(document).on('click', '#input-search',function() {
-    $inputField.val('').keyup();
-  });
-
-  // Dynamic styles
-  $('#facets').on('mouseenter mouseleave', '.button-checkbox', function(){
-    $(this).parent().find('.facet_link').toggleClass('hover');
-  });
-  $('#facets').on('mouseenter mouseleave', '.facet_link', function(){
-    $(this).parent().find('.button-checkbox button.btn').toggleClass('hover');
-  });
-
-
-  /************
-  * HELPERS
-  * ***********/
-
-  function toggleIconEmptyInput(isEmpty) {
-    if(isEmpty) {
-      $('#input-search')
-        .addClass('glyphicon-search')
-        .removeClass('glyphicon-remove');
-    } else {
-      $('#input-search')
-        .removeClass('glyphicon-search')
-        .addClass('glyphicon-remove');
+  function handleNoResults(content) {
+    if (content.nbHits > 0) {
+      $main.removeClass('no-results');
+      return;
     }
+    $main.addClass('no-results');
+
+    var filters = [];
+    var i;
+    var j;
+    for (i in algoliaHelper.state.facetsRefinements) {
+      filters.push({
+        class: 'toggle-refine',
+        facet: i, facet_value: algoliaHelper.state.facetsRefinements[i],
+        label: FACETS_LABELS[i] + ': ',
+        label_value: algoliaHelper.state.facetsRefinements[i]
+      });
+    }
+    for (i in algoliaHelper.state.disjunctiveFacetsRefinements) {
+      for (j in algoliaHelper.state.disjunctiveFacetsRefinements[i]) {
+        filters.push({
+          class: 'toggle-refine',
+          facet: i,
+          facet_value: algoliaHelper.state.disjunctiveFacetsRefinements[i][j],
+          label: FACETS_LABELS[i] + ': ',
+          label_value: algoliaHelper.state.disjunctiveFacetsRefinements[i][j]
+        });
+      }
+    }
+    for (i in algoliaHelper.state.numericRefinements) {
+      for (j in algoliaHelper.state.numericRefinements[i]) {
+        filters.push({
+          class: 'remove-numeric-refine',
+          facet: i,
+          facet_value: j,
+          label: FACETS_LABELS[i] + ' ',
+          label_value: j + ' ' + algoliaHelper.state.numericRefinements[i][j]
+        });
+      }
+    }
+    $hits.html(noResultsTemplate.render({query: content.query, filters: filters}));
   }
-  function numberWithDelimiter(number, delimiter) {
-    number = number + '';
-    delimiter = delimiter || ',';
-    var split = number.split('.');
-    split[0] = split[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + delimiter);
-    return split.join('.');
+
+  // EVENTS BINDING
+  // ==============
+
+  $(document).on('click', '.toggle-refine', function(e) {
+    e.preventDefault();
+    algoliaHelper.toggleRefine($(this).data('facet'), $(this).data('value')).search();
+  });
+  $(document).on('click', '.go-to-page', function(e) {
+    e.preventDefault();
+    $('html, body').animate({scrollTop: 0}, '500', 'swing');
+    algoliaHelper.setCurrentPage(+$(this).data('page') - 1).search();
+  });
+  $sortBySelect.on('change', function(e) {
+    e.preventDefault();
+    algoliaHelper.setIndex(INDEX_NAME + $(this).val()).search();
+  });
+  $searchInputIcon.on('click', function(e) {
+    e.preventDefault();
+    $searchInput.val('').keyup().focus();
+  });
+  $(document).on('click', '.remove-numeric-refine', function(e) {
+    e.preventDefault();
+    algoliaHelper.removeNumericRefinement($(this).data('facet'), $(this).data('value')).search();
+  });
+  $(document).on('click', '.clear-all', function(e) {
+    e.preventDefault();
+    $searchInput.val('').focus();
+    algoliaHelper.setQuery('').clearRefinements().search();
+  });
+
+
+
+  // URL MANAGEMENT
+  // ==============
+
+
+
+  // HELPER METHODS
+  // ==============
+
+  function toggleIconEmptyInput(query) {
+    $searchInputIcon.toggleClass('empty', query.trim() !== '');
   }
-  function sortByCountDesc (a, b) {
-    return b.count - a.count;
-  }
-  function sortByName (a, b) {
-    return a.value.localeCompare(b.value);
-  }
-  function sortByRefined (sortFunction) {
-    return function (a, b) {
+
+  function sortByRefined(sortFunction) {
+    return function(a, b) {
       if (a.refined !== b.refined) {
         if (a.refined) return -1;
         if (b.refined) return 1;
@@ -271,48 +287,12 @@ $(document).ready(function() {
       return sortFunction(a, b);
     };
   }
-  function initWithUrlParams() {
-    var sPageURL = location.hash;
-    if (!sPageURL || sPageURL.length === 0) {
-      return true;
-    }
-    var sURLVariables = sPageURL.split('&');
-    if (!sURLVariables || sURLVariables.length === 0) {
-      return true;
-    }
-    var query = decodeURIComponent(sURLVariables[0].split('=')[1]);
-    $inputField.val(query);
-    helper.setQuery(query);
-    for (var i = 2; i < sURLVariables.length; i++) {
-      var sParameterName = sURLVariables[i].split('=');
-      var facet = decodeURIComponent(sParameterName[0]);
-      var value = decodeURIComponent(sParameterName[1]);
-      helper.toggleRefine(facet, value, false);
-    }
-    // Page has to be set in the end to avoid being overwritten
-    var page = decodeURIComponent(sURLVariables[1].split('=')[1]) -1;
-    helper.setCurrentPage(page);
+
+  function sortByCountDesc(a, b) {
+    return b.count - a.count;
   }
 
-  function setURLParams(state) {
-    var urlParams = '#';
-    var currentQuery = state.query;
-    urlParams += 'q=' + encodeURIComponent(currentQuery);
-    var currentPage = state.page + 1;
-    urlParams += '&page=' + currentPage;
-    for (var facetRefine in state.facetsRefinements) {
-      urlParams += '&' + encodeURIComponent(facetRefine) + '=' + encodeURIComponent(state.facetsRefinements[facetRefine]);
-    }
-    for (var disjunctiveFacetrefine in state.disjunctiveFacetsRefinements) {
-      for (var value in state.disjunctiveFacetsRefinements[disjunctiveFacetrefine]) {
-        urlParams += '&' + encodeURIComponent(disjunctiveFacetrefine) + '=' + encodeURIComponent(state.disjunctiveFacetsRefinements[disjunctiveFacetrefine][value]);
-      }
-    }
-    location.replace(urlParams);
-  }
-
-  var uniqueId = 0;
-  function getUniqueId() {
-    return 'uniqueId_' + (++uniqueId);
+  function sortByName(a, b) {
+    return a.value.localeCompare(b.value);
   }
 });

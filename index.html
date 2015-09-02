@@ -47,7 +47,7 @@
 
   <!-- Footer -->
   <footer>
-    Source Code on <a href="http://github.com/algolia/instant-search-demo">Github</a> - 
+    Source Code on <a href="http://github.com/algolia/instant-search-demo">Github</a> -
     Powered by <a href="http://algolia.com">Algolia</a> - Data from <a href="https://developer.bestbuy.com">Best Buy</a>
   </footer>
   <!-- /Footer -->
@@ -82,8 +82,8 @@
       <ul>
         {{#values}}
         <li>
-          <a href="" class="facet-link toggle-refine {{#disjunctive}}facet-disjunctive{{/disjunctive}} {{#refined}}facet-refined{{/refined}}" data-facet="{{ facet }}" data-value="{{ value }}">
-            {{ label }}<span class="facet-count">{{ count }}</span>
+          <a href="" class="facet-link toggle-refine {{#disjunctive}}facet-disjunctive{{/disjunctive}} {{#refined}}facet-refined{{/refined}}" data-facet="{{ facet }}" data-value="{{ name }}">
+            {{ name }}<span class="facet-count">{{ count }}</span>
           </a>
         </li>
         {{/values}}

@@ -116,20 +116,10 @@ $(document).ready(function() {
 
       // Conjunctive + Disjunctive facets
       else {
-        var values = [];
-        for (var value in facetResult.data) {
-          values.push({
-            label: value,
-            value: value,
-            count: facetResult.data[value],
-            refined: algoliaHelper.isRefined(facetName, value)
-          });
-        }
-        values.sort(sortByRefined(sortByCountDesc));
         facetContent = {
           facet: facetName,
           title: FACETS_LABELS[facetName],
-          values: values,
+          values: content.getFacetValues(facetName, {sortBy: ['isRefined:desc', 'count:desc']}),
           disjunctive: $.inArray(facetName, PARAMS.disjunctiveFacets) !== -1
         };
         facetsHtml += facetTemplate.render(facetContent);
@@ -276,23 +266,5 @@ $(document).ready(function() {
 
   function toggleIconEmptyInput(query) {
     $searchInputIcon.toggleClass('empty', query.trim() !== '');
-  }
-
-  function sortByRefined(sortFunction) {
-    return function(a, b) {
-      if (a.refined !== b.refined) {
-        if (a.refined) return -1;
-        if (b.refined) return 1;
-      }
-      return sortFunction(a, b);
-    };
-  }
-
-  function sortByCountDesc(a, b) {
-    return b.count - a.count;
-  }
-
-  function sortByName(a, b) {
-    return a.value.localeCompare(b.value);
   }
 });

@@ -116,6 +116,7 @@ $(document).ready(function() {
 
       // Conjunctive + Disjunctive facets
       else {
+        console.log(content.getFacetValues(facetName, {sortBy: ['isRefined:desc', 'count:desc']}));
         facetContent = {
           facet: facetName,
           title: FACETS_LABELS[facetName],

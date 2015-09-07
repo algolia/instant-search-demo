@@ -40,6 +40,12 @@ end
 ####
 products = JSON.parse File.read("data.json")
 
+# Set free_shipping on some items
+products.map! do |product|
+  product["free_shipping"] = (product["objectID"] % 9 == 0)
+  product
+end
+
 
 ####
 #### ALGOLIA INIT & CONFIGURATION
@@ -49,7 +55,7 @@ index = Algolia::Index.new(ARGV[2])
 index.set_settings({
 	attributesToIndex: ["brand", "name", "categories", "unordered(description)"],
 	customRanking: ["desc(popularity)"],
-	attributesForFaceting: ["brand", "price_range", "categories", "type", "price"],
+	attributesForFaceting: ["brand", "price_range", "categories", "type", "price", "free_shipping"],
 	minWordSizefor1Typo: 3,
 	minWordSizefor2Typos: 7,
 	ignorePlurals: true,
@@ -58,7 +64,7 @@ index.set_settings({
 Algolia::Index.new("#{ARGV[2]}_price_desc").set_settings({
 	attributesToIndex: ["brand", "name", "categories", "unordered(description)"],
 	customRanking: ["desc(popularity)"],
-	attributesForFaceting: ["brand", "price_range", "categories", "type", "price"],
+	attributesForFaceting: ["brand", "price_range", "categories", "type", "price", "free_shipping"],
 	minWordSizefor1Typo: 3,
 	minWordSizefor2Typos: 7,
 	ignorePlurals: true,
@@ -68,7 +74,7 @@ Algolia::Index.new("#{ARGV[2]}_price_desc").set_settings({
 Algolia::Index.new("#{ARGV[2]}_price_asc").set_settings({
 	attributesToIndex: ["brand", "name", "categories", "unordered(description)"],
 	customRanking: ["desc(popularity)"],
-	attributesForFaceting: ["brand", "price_range", "categories", "type", "price"],
+	attributesForFaceting: ["brand", "price_range", "categories", "type", "price", "free_shipping"],
 	minWordSizefor1Typo: 3,
 	minWordSizefor2Typos: 7,
 	ignorePlurals: true,

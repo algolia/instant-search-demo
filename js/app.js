@@ -144,10 +144,16 @@ $(document).ready(function() {
           return '$' + parseInt(num, 10);
         },
         onFinish: function(data) {
-          if (data.from !== (state.getNumericRefinement(facetName, '>=') || data.min)) {
+          var lowerBound = state.getNumericRefinement(facetName, '>=');
+          lowerBound = lowerBound && lowerBound[0] || data.min;
+          if (data.from !== lowerBound) {
+            algoliaHelper.removeNumericRefinement(facetName, '>=');
             algoliaHelper.addNumericRefinement(facetName, '>=', data.from).search();
           }
-          if (data.to !== (state.getNumericRefinement(facetName, '<=') || data.max)) {
+          var upperBound = state.getNumericRefinement(facetName, '<=');
+          upperBound = upperBound && upperBound[0] || data.max;
+          if (data.to !== upperBound) {
+            algoliaHelper.removeNumericRefinement(facetName, '<=');
             algoliaHelper.addNumericRefinement(facetName, '<=', data.to).search();
           }
         }

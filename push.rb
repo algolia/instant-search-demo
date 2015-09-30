@@ -15,36 +15,9 @@ end
 
 
 ####
-#### HELPER METHODS
-####
-def get_price_range price
-	case price
-	when 0..50
-		"1 - 50"
-	when 50..100
-		"50 - 100"
-	when 100..200
-		"100 - 200"
-	when 200..500
-		"200 - 500"
-	when 500..2000
-		"500 - 2000"
-	else
-		"> 2000"
-	end
-end
-
-
-####
 #### LOAD DATA
 ####
 products = JSON.parse File.read("data.json")
-
-# Set free_shipping on some items
-products.map! do |product|
-  product["free_shipping"] = (product["objectID"] % 9 == 0)
-  product
-end
 
 
 ####
@@ -52,35 +25,25 @@ end
 ####
 Algolia.init :application_id => ARGV[0], :api_key => ARGV[1]
 index = Algolia::Index.new(ARGV[2])
-index.set_settings({
-	attributesToIndex: ["brand", "name", "categories", "unordered(description)"],
-	customRanking: ["desc(popularity)"],
-	attributesForFaceting: ["brand", "price_range", "categories", "type", "price", "free_shipping"],
-	minWordSizefor1Typo: 3,
-	minWordSizefor2Typos: 7,
-	ignorePlurals: true,
-	slaves: ["#{ARGV[2]}_price_desc", "#{ARGV[2]}_price_asc"]
-	})
-Algolia::Index.new("#{ARGV[2]}_price_desc").set_settings({
-	attributesToIndex: ["brand", "name", "categories", "unordered(description)"],
-	customRanking: ["desc(popularity)"],
-	attributesForFaceting: ["brand", "price_range", "categories", "type", "price", "free_shipping"],
-	minWordSizefor1Typo: 3,
-	minWordSizefor2Typos: 7,
-	ignorePlurals: true,
-	typoTolerance: "min",
-	ranking:  ["desc(price)", "typo", "geo", "words", "proximity", "attribute", "exact", "custom"]
-	})
-Algolia::Index.new("#{ARGV[2]}_price_asc").set_settings({
-	attributesToIndex: ["brand", "name", "categories", "unordered(description)"],
-	customRanking: ["desc(popularity)"],
-	attributesForFaceting: ["brand", "price_range", "categories", "type", "price", "free_shipping"],
-	minWordSizefor1Typo: 3,
-	minWordSizefor2Typos: 7,
-	ignorePlurals: true,
-	typoTolerance: "min",
-	ranking:  ["asc(price)", "typo", "geo", "words", "proximity", "attribute", "exact", "custom"]
-	})
+
+default_settings = {
+  attributesToIndex: ['brand', 'name', 'categories', 'hierarchicalCategories', 'unordered(description)'],
+  customRanking: ['desc(popularity)'],
+  attributesForFaceting: ['brand', 'price_range', 'categories', 'hierarchicalCategories', 'type', 'price'],
+  minWordSizefor1Typo: 3,
+  minWordSizefor2Typos: 7
+}
+index_settings = default_settings.clone
+index_settings["ignorePlurals"] = true
+index_settings["slaves"] = ["#{ARGV[2]}_price_desc", "#{ARGV[2]}_price_asc"]
+price_desc_settings = default_settings.clone
+price_desc_settings["ranking"] = ["desc(price)", "typo", "geo", "words", "proximity", "attribute", "exact", "custom"]
+price_asc_settings = default_settings.clone
+price_asc_settings["ranking"] = ["asc(price)", "typo", "geo", "words", "proximity", "attribute", "exact", "custom"]
+
+index.set_settings(index_settings)
+Algolia::Index.new("#{ARGV[2]}_price_desc").set_settings(price_desc_settings)
+Algolia::Index.new("#{ARGV[2]}_price_asc").set_settings(price_asc_settings)
 
 
 ####

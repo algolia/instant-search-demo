@@ -60,6 +60,11 @@ $(document).ready(function() {
     console.log(error);
   });
 
+  // Update URL
+  algoliaHelper.on('change', function(state) {
+    setURLParams();
+  });
+
   // Search results
   algoliaHelper.on('result', function(content, state) {
     renderStats(content);
@@ -71,6 +76,7 @@ $(document).ready(function() {
   });
 
   // Initial search
+  initFromURLParams();
   algoliaHelper.search();
 
 
@@ -184,6 +190,8 @@ $(document).ready(function() {
     $pagination.html(paginationTemplate.render(pagination));
   }
 
+
+
   // NO RESULTS
   // ==========
 
@@ -230,6 +238,8 @@ $(document).ready(function() {
     $hits.html(noResultsTemplate.render({query: content.query, filters: filters}));
   }
 
+
+
   // EVENTS BINDING
   // ==============
 
@@ -265,6 +275,42 @@ $(document).ready(function() {
   // URL MANAGEMENT
   // ==============
 
+  function initFromURLParams() {
+    var URLString = window.location.search.slice(1);
+    var URLParams = algoliasearchHelper.AlgoliaSearchHelper.getConfigurationFromQueryString(URLString);
+    if (URLParams.query) $searchInput.val(URLParams.query);
+    if (URLParams.index) $sortBySelect.val(URLParams.index.replace(INDEX_NAME, ''));
+    algoliaHelper.state = algoliaHelper.state.setQueryParameters(URLParams);
+  }
+
+  var URLHistoryTimer = Date.now();
+  var URLHistoryThreshold = 700;
+  function setURLParams() {
+    var trackedParameters = ['attribute:*'];
+    if (algoliaHelper.state.query.trim() !== '')  trackedParameters.push('query');
+    if (algoliaHelper.state.page !== 0)           trackedParameters.push('page');
+    if (algoliaHelper.state.index !== INDEX_NAME) trackedParameters.push('index');
+
+    var URLParams = window.location.search.slice(1);
+    var nonAlgoliaURLParams = algoliasearchHelper.AlgoliaSearchHelper.getForeignConfigurationInQueryString(URLParams);
+    var nonAlgoliaURLHash = window.location.hash;
+    var helperParams = algoliaHelper.getStateAsQueryString({filters: trackedParameters, moreAttributes: nonAlgoliaURLParams});
+    if (URLParams === helperParams) return;
+
+    var now = Date.now();
+    if (URLHistoryTimer > now) {
+      window.history.replaceState(null, '', '?' + helperParams + nonAlgoliaURLHash);
+    } else {
+      window.history.pushState(null, '', '?' + helperParams + nonAlgoliaURLHash);
+    }
+    URLHistoryTimer = now+URLHistoryThreshold;
+  }
+
+  window.addEventListener('popstate', function() {
+    initFromURLParams();
+    algoliaHelper.search();
+  });
+
 
 
   // HELPER METHODS
@@ -273,4 +319,6 @@ $(document).ready(function() {
   function toggleIconEmptyInput(query) {
     $searchInputIcon.toggleClass('empty', query.trim() !== '');
   }
+
+
 });

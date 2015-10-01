@@ -280,7 +280,7 @@ $(document).ready(function() {
     var URLParams = algoliasearchHelper.AlgoliaSearchHelper.getConfigurationFromQueryString(URLString);
     if (URLParams.query) $searchInput.val(URLParams.query);
     if (URLParams.index) $sortBySelect.val(URLParams.index.replace(INDEX_NAME, ''));
-    algoliaHelper.state = algoliaHelper.state.setQueryParameters(URLParams);
+    algoliaHelper.overrideStateWithoutTriggeringChangeEvent(algoliaHelper.state.setQueryParameters(URLParams));
   }
 
   var URLHistoryTimer = Date.now();

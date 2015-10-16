@@ -277,7 +277,7 @@ $(document).ready(function() {
 
   function initFromURLParams() {
     var URLString = window.location.search.slice(1);
-    var URLParams = algoliasearchHelper.AlgoliaSearchHelper.getConfigurationFromQueryString(URLString);
+    var URLParams = algoliasearchHelper.url.getStateFromQueryString(URLString);
     if (URLParams.query) $searchInput.val(URLParams.query);
     if (URLParams.index) $sortBySelect.val(URLParams.index.replace(INDEX_NAME, ''));
     algoliaHelper.overrideStateWithoutTriggeringChangeEvent(algoliaHelper.state.setQueryParameters(URLParams));
@@ -292,7 +292,7 @@ $(document).ready(function() {
     if (algoliaHelper.state.index !== INDEX_NAME) trackedParameters.push('index');
 
     var URLParams = window.location.search.slice(1);
-    var nonAlgoliaURLParams = algoliasearchHelper.AlgoliaSearchHelper.getForeignConfigurationInQueryString(URLParams);
+    var nonAlgoliaURLParams = algoliasearchHelper.url.getUnrecognizedParametersInQueryString(URLParams);
     var nonAlgoliaURLHash = window.location.hash;
     var helperParams = algoliaHelper.getStateAsQueryString({filters: trackedParameters, moreAttributes: nonAlgoliaURLParams});
     if (URLParams === helperParams) return;

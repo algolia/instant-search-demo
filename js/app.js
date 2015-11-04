@@ -48,8 +48,9 @@ $(document).ready(function() {
 
   // Input binding
   $searchInput
-  .on('keyup', function() {
-    var query = $(this).val();
+  .on('input propertychange', function(e) {
+    var query = e.currentTarget.value;
+
     toggleIconEmptyInput(query);
     algoliaHelper.setQuery(query).search();
   })

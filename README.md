@@ -4,7 +4,7 @@ Instant-Search Demo
 This is a sample project implementing an instant-search based e-commerce website with [Algolia](http://www.algolia.com). Algolia is a Search API that provides hosted full-text, numerical and faceted search.
 
 ## Features
-* Full JavaScript (based on [jQuery](http://jquery.com/), [Hogan.js](http://twitter.github.io/hogan.js/) and [AlgoliaSearch](https://github.com/algolia/algoliasearch-client-js) + [helper](https://github.com/algolia/algoliasearch-helper-js))
+* Full-JavaScript/frontend implementation based on [instantsearch.js](https://community.algolia.com/instantsearch.js/)
 * Results page refreshed as you type
 * Hits
 * Facets

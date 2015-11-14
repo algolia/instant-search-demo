@@ -11,7 +11,10 @@ function app(opts) {
     appId: opts.appId,
     apiKey: opts.apiKey,
     indexName: opts.indexName,
-    searchParameters: opts.searchParameters
+    searchParameters: opts.searchParameters,
+    urlSync: {
+      useHash: true
+    }
   });
 
   var widgets = [
@@ -22,15 +25,12 @@ function app(opts) {
       container: '#hits',
       hitsPerPage: 10,
       templates: {
-        hit: getTemplate('hit'),
+        item: getTemplate('hit'),
         empty: getTemplate('no-results')
       }
     }),
     instantsearch.widgets.stats({
-      container: '#stats',
-      templates: {
-        body: getTemplate('stats')
-      }
+      container: '#stats'
     }),
     instantsearch.widgets.indexSelector({
       container: '#sort-by',
@@ -48,43 +48,36 @@ function app(opts) {
     }),
     instantsearch.widgets.refinementList({
       container: '#category',
-      facetName: 'categories',
+      attributeName: 'categories',
       limit: 10,
       operator: 'or',
       templates: {
-        header: getHeader('Category'),
-        item: getTemplate('or-facet-item')
+        header: getHeader('Category')
       }
     }),
     instantsearch.widgets.refinementList({
       container: '#brand',
-      facetName: 'brand',
+      attributeName: 'brand',
       limit: 10,
       operator: 'or',
       templates: {
-        header: getHeader('Brand'),
-        item: getTemplate('or-facet-item')
+        header: getHeader('Brand')
       }
     }),
     instantsearch.widgets.rangeSlider({
       container: '#price',
-      facetName: 'price',
+      attributeName: 'price',
       templates: {
         header: getHeader('Price')
       }
     }),
-    instantsearch.widgets.refinementList({
+    instantsearch.widgets.menu({
       container: '#type',
-      facetName: 'type',
-      operator: 'and',
+      attributeName: 'type',
       limit: 10,
       templates: {
-        header: getHeader('Type'),
-        item: getTemplate('single-refine-facet-item')
+        header: getHeader('Type')
       }
-    }),
-    instantsearch.widgets.urlSync({
-      useHash: true
     })
   ];
 

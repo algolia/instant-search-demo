@@ -149,18 +149,18 @@ header img {
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
 }
-#pagination li.active a {
+#pagination li.ais-pagination--item__active a {
   color: white;
   border-color: #ed5565;
   background: #ed5565;
 }
-#pagination li.active a:hover {
+#pagination li.ais-pagination--item__active a:hover {
   cursor: default;
 }
-#pagination li.disabled a {
+#pagination li.ais-pagination--item__disabled a {
   cursor: not-allowed;
 }
-#pagination li.disabled a:hover {
+#pagination li.ais-pagination--item__disabled a:hover {
   background: none;
 }
 
@@ -174,10 +174,9 @@ header img {
 
 /* STATS */
 #stats {
-  min-height: 18px;
+  font-size: 0.8em;
 }
-#stats .found-in {
-  font-size: 12px;
+#stats .ais-stats--time {
   color: #999;
 }
 
@@ -199,48 +198,29 @@ header img {
 .facet li {
   margin-bottom: 3px;
 }
-.facet-link {
+.ais-refinement-list--label,
+.ais-menu--link {
   font-size: 13px;
   line-height: 1.2;
   text-decoration: none;
   color: #000;
+  cursor: pointer;
 }
-.facet-link:hover, .facet-link.facet-refined {
+.ais-refinement-list--label:hover, .ais-refinement-list--item__active .ais-refinement-list--label,
+.ais-menu--link:hover, .ais-menu--item__active .ais-menu--link {
   color: #ed5565;
 }
-.facet .facet-link.facet-refined:hover {
+.ais-refinement-list--item__active .ais-refinement-list--label:hover,
+.ais-menu--item__active .ais-menu--link:hover {
   text-decoration: line-through;
   color: #ed5565;
 }
-.facet-count {
+.ais-refinement-list--count,
+.ais-menu--count {
   position: relative;
   top: 3px;
   float: right;
   color: #999;
-}
-/* Checkboxes */
-.facet-disjunctive {
-  font-weight: normal;
-  position: relative;
-  margin-left: 18px;
-}
-.facet-disjunctive:before {
-  position: absolute;
-  top: 1px;
-  left: -18px;
-  width: 16px;
-  height: 16px;
-  content: '';
-  background: url(../img/checkbox_icons.png) 0 0 no-repeat;
-}
-.facet-disjunctive:hover:before {
-  background-position: -24px 0;
-}
-.facet-disjunctive.facet-refined:before {
-  background-position: -48px 0;
-}
-.facet-disjunctive.facet-refined:hover:before {
-  background-position: -72px 0;
 }
 
 /* NO RESULTS */
@@ -300,22 +280,17 @@ a.clear-all:hover {
 }
 
 /* SLIDER */
-.as-range-slider--target {
-  margin: 40px 0;
+.ais-range-slider--target {
+  margin: 40px 30px 40px 0;
   font-size: 13px;
 }
 
-.as-range-slider--connect, .as-range-slider--handle {
+.ais-range-slider--connect {
   background: #ed5565;
 }
 
-.as-range-slider--tooltip {
+.ais-range-slider--handle {
   border-color: #ed5565;
-  color: #000;
-}
-
-.as-range-slider--active .as-range-slider--tooltip, .as-range-slider--handle:hover .as-range-slider--tooltip {
-  background: #ed5565;
 }
 
 /* FOOTER */

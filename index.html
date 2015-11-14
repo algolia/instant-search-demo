@@ -7,6 +7,7 @@
   <!--[if lte IE 9]>
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
   <![endif]-->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/instantsearch.js/0/instantsearch.min.css">
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
@@ -52,20 +53,6 @@
         <p class="hit-description">{{{_highlightResult.description.value}}}</p>
       </div>
     </div>
-  </script>
-
-  <script type="text/html" id="stats-template">
-    {{nbHits}} Result{{#hasManyResults}}s{{/hasManyResults}} <span class="found-in">Found in {{processingTimeMS}}ms</span>
-  </script>
-
-  <script type="text/html" id="or-facet-item-template">
-    <a href="#" class="facet-link toggle-refine facet-disjunctive{{#isRefined}} facet-refined{{/isRefined}}">{{name}} <span class="facet-count">{{count}}</span>
-    </a>
-  </script>
-
-  <script type="text/html" id="single-refine-facet-item-template">
-    <a href="#" class="facet-link toggle-refine {{#isRefined}} facet-refined{{/isRefined}}">{{name}} <span class="facet-count">{{count}}</span>
-    </a>
   </script>
 
   <script type="text/html" id="no-results-template">

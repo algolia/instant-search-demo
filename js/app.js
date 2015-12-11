@@ -34,12 +34,12 @@ $(document).ready(function() {
   $pagination = $('#pagination');
 
   // Hogan templates binding
-  var hitTemplate = Hogan.compile($('#hit-template').text());
-  var statsTemplate = Hogan.compile($('#stats-template').text());
-  var facetTemplate = Hogan.compile($('#facet-template').text());
-  var sliderTemplate = Hogan.compile($('#slider-template').text());
-  var paginationTemplate = Hogan.compile($('#pagination-template').text());
-  var noResultsTemplate = Hogan.compile($('#no-results-template').text());
+  var hitTemplate = Hogan.compile($('#hit-template').html());
+  var statsTemplate = Hogan.compile($('#stats-template').html());
+  var facetTemplate = Hogan.compile($('#facet-template').html());
+  var sliderTemplate = Hogan.compile($('#slider-template').html());
+  var paginationTemplate = Hogan.compile($('#pagination-template').html());
+  var noResultsTemplate = Hogan.compile($('#no-results-template').html());
 
 
 
@@ -208,7 +208,7 @@ $(document).ready(function() {
     var j;
     for (i in algoliaHelper.state.facetsRefinements) {
       filters.push({
-        class: 'toggle-refine',
+        cssClass: 'toggle-refine',
         facet: i, facet_value: algoliaHelper.state.facetsRefinements[i],
         label: FACETS_LABELS[i] + ': ',
         label_value: algoliaHelper.state.facetsRefinements[i]
@@ -217,7 +217,7 @@ $(document).ready(function() {
     for (i in algoliaHelper.state.disjunctiveFacetsRefinements) {
       for (j in algoliaHelper.state.disjunctiveFacetsRefinements[i]) {
         filters.push({
-          class: 'toggle-refine',
+          cssClass: 'toggle-refine',
           facet: i,
           facet_value: algoliaHelper.state.disjunctiveFacetsRefinements[i][j],
           label: FACETS_LABELS[i] + ': ',
@@ -228,7 +228,7 @@ $(document).ready(function() {
     for (i in algoliaHelper.state.numericRefinements) {
       for (j in algoliaHelper.state.numericRefinements[i]) {
         filters.push({
-          class: 'remove-numeric-refine',
+          cssClass: 'remove-numeric-refine',
           facet: i,
           facet_value: j,
           label: FACETS_LABELS[i] + ' ',
@@ -287,6 +287,10 @@ $(document).ready(function() {
   var URLHistoryTimer = Date.now();
   var URLHistoryThreshold = 700;
   function setURLParams() {
+    if (!window.history || !window.history.pushState) {
+      return;
+    }
+
     var trackedParameters = ['attribute:*'];
     if (algoliaHelper.state.query.trim() !== '')  trackedParameters.push('query');
     if (algoliaHelper.state.page !== 0)           trackedParameters.push('page');
@@ -307,12 +311,10 @@ $(document).ready(function() {
     URLHistoryTimer = now+URLHistoryThreshold;
   }
 
-  window.addEventListener('popstate', function() {
+  $(window).on('popstate', function() {
     initFromURLParams();
     algoliaHelper.search();
   });
-
-
 
   // HELPER METHODS
   // ==============

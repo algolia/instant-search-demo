@@ -7,6 +7,13 @@
   <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.ion.rangeslider/2.0.12/css/ion.rangeSlider.skinFlat.css">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
   <!-- /CSS -->
+  <!--[if lte IE 8]>
+    <script src="//cdn.jsdelivr.net/core-js/2/shim.min.js"></script>
+  <![endif]-->
+  <!--[if lte IE 9]>
+    <script src="//cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <![endif]-->
+
 </head>
 <body>
 
@@ -116,7 +123,7 @@
       <p>We didn't find any results for the search <em>"{{ query }}"</em>.</p>
       <ul>
         {{#filters}}
-        <li class="{{ class }}" data-facet="{{ facet }}" data-value="{{ facet_value }}">
+        <li class="{{ cssClass }}" data-facet="{{ facet }}" data-value="{{ facet_value }}">
           {{ label }}<span class="value">{{ label_value }}</span><a class="remove"><img src="img/remove.svg"/></a>
         </li>
         {{/filters}}
@@ -126,10 +133,8 @@
     </div>
   </script>
 
-
-
   <!-- Javascript -->
-  <script src="//cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
   <script src="//cdn.jsdelivr.net/algoliasearch.helper/2/algoliasearch.helper.min.js"></script>
   <script src="//cdn.jsdelivr.net/hogan.js/3.0.2/hogan.min.common.js"></script>

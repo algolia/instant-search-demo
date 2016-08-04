@@ -13,7 +13,8 @@ $(document).ready(function() {
     hitsPerPage: 10,
     maxValuesPerFacet: 8,
     facets: ['type'],
-    disjunctiveFacets: ['categories', 'brand', 'price']
+    disjunctiveFacets: ['categories', 'brand', 'price'],
+    index: INDEX_NAME
   };
   var FACETS_SLIDER = ['price'];
   var FACETS_ORDER_OF_DISPLAY = ['categories', 'brand', 'price', 'type'];
@@ -279,9 +280,10 @@ $(document).ready(function() {
   function initFromURLParams() {
     var URLString = window.location.search.slice(1);
     var URLParams = algoliasearchHelper.url.getStateFromQueryString(URLString);
-    if (URLParams.query) $searchInput.val(URLParams.query);
-    if (URLParams.index) $sortBySelect.val(URLParams.index.replace(INDEX_NAME, ''));
-    algoliaHelper.overrideStateWithoutTriggeringChangeEvent(algoliaHelper.state.setQueryParameters(URLParams));
+    var stateFromURL = Object.assign({}, PARAMS, URLParams)
+    $searchInput.val(stateFromURL.query);
+    $sortBySelect.val(stateFromURL.index.replace(INDEX_NAME, ''));
+    algoliaHelper.overrideStateWithoutTriggeringChangeEvent(stateFromURL);
   }
 
   var URLHistoryTimer = Date.now();

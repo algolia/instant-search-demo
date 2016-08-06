@@ -111,7 +111,7 @@ $(document).ready(function() {
       if ($.inArray(facetName, FACETS_SLIDER) !== -1) {
         facetContent = {
           facet: facetName,
-          title: FACETS_LABELS[facetName]
+          title: FACETS_LABELS[facetName] || facetName 
         };
         facetContent.min = facetResult.stats.min;
         facetContent.max = facetResult.stats.max;
@@ -126,7 +126,7 @@ $(document).ready(function() {
       else {
         facetContent = {
           facet: facetName,
-          title: FACETS_LABELS[facetName],
+          title: FACETS_LABELS[facetName] || facetName,
           values: content.getFacetValues(facetName, {sortBy: ['isRefined:desc', 'count:desc']}),
           disjunctive: $.inArray(facetName, PARAMS.disjunctiveFacets) !== -1
         };

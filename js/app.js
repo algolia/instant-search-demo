@@ -1,6 +1,5 @@
 $(document).ready(function() {
-
-
+  'use strict';
 
   // INITIALIZATION
   // ==============
@@ -25,14 +24,14 @@ $(document).ready(function() {
   var algoliaHelper = algoliasearchHelper(algolia, INDEX_NAME, PARAMS);
 
   // DOM BINDING
-  $searchInput = $('#search-input');
-  $searchInputIcon = $('#search-input-icon');
-  $main = $('main');
-  $sortBySelect = $('#sort-by-select');
-  $hits = $('#hits');
-  $stats = $('#stats');
-  $facets = $('#facets');
-  $pagination = $('#pagination');
+  var $searchInput = $('#search-input');
+  var $searchInputIcon = $('#search-input-icon');
+  var $main = $('main');
+  var $sortBySelect = $('#sort-by-select');
+  var $hits = $('#hits');
+  var $stats = $('#stats');
+  var $facets = $('#facets');
+  var $pagination = $('#pagination');
 
   // Hogan templates binding
   var hitTemplate = Hogan.compile($('#hit-template').text());
@@ -138,7 +137,7 @@ $(document).ready(function() {
 
   function bindSearchObjects(state) {
     // Bind Sliders
-    for (facetIndex = 0; facetIndex < FACETS_SLIDER.length; ++facetIndex) {
+    for (var facetIndex = 0; facetIndex < FACETS_SLIDER.length; ++facetIndex) {
       var facetName = FACETS_SLIDER[facetIndex];
       var slider = $('#' + facetName + '-slider');
       var sliderOptions = {

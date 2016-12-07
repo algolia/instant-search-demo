@@ -1,6 +1,5 @@
 $(document).ready(function() {
-
-
+  'use strict';
 
   // INITIALIZATION
   // ==============
@@ -25,14 +24,14 @@ $(document).ready(function() {
   var algoliaHelper = algoliasearchHelper(algolia, INDEX_NAME, PARAMS);
 
   // DOM BINDING
-  $searchInput = $('#search-input');
-  $searchInputIcon = $('#search-input-icon');
-  $main = $('main');
-  $sortBySelect = $('#sort-by-select');
-  $hits = $('#hits');
-  $stats = $('#stats');
-  $facets = $('#facets');
-  $pagination = $('#pagination');
+  var $searchInput = $('#search-input');
+  var $searchInputIcon = $('#search-input-icon');
+  var $main = $('main');
+  var $sortBySelect = $('#sort-by-select');
+  var $hits = $('#hits');
+  var $stats = $('#stats');
+  var $facets = $('#facets');
+  var $pagination = $('#pagination');
 
   // Hogan templates binding
   var hitTemplate = Hogan.compile($('#hit-template').text());
@@ -111,7 +110,7 @@ $(document).ready(function() {
       if ($.inArray(facetName, FACETS_SLIDER) !== -1) {
         facetContent = {
           facet: facetName,
-          title: FACETS_LABELS[facetName]
+          title: FACETS_LABELS[facetName] || facetName 
         };
         facetContent.min = facetResult.stats.min;
         facetContent.max = facetResult.stats.max;
@@ -126,7 +125,7 @@ $(document).ready(function() {
       else {
         facetContent = {
           facet: facetName,
-          title: FACETS_LABELS[facetName],
+          title: FACETS_LABELS[facetName] || facetName,
           values: content.getFacetValues(facetName, {sortBy: ['isRefined:desc', 'count:desc']}),
           disjunctive: $.inArray(facetName, PARAMS.disjunctiveFacets) !== -1
         };
@@ -137,21 +136,8 @@ $(document).ready(function() {
   }
 
   function bindSearchObjects(state) {
-    // Bind Sliders
-    for (facetIndex = 0; facetIndex < FACETS_SLIDER.length; ++facetIndex) {
-      var facetName = FACETS_SLIDER[facetIndex];
-      var slider = $('#' + facetName + '-slider');
-      var sliderOptions = {
-        type: 'double',
-        grid: true,
-        min: slider.data('min'),
-        max: slider.data('max'),
-        from: slider.data('from'),
-        to: slider.data('to'),
-        prettify: function(num) {
-          return '$' + parseInt(num, 10);
-        },
-        onFinish: function(data) {
+    function createOnFinish(facetName) {
+      return function onFinish(data) {
           var lowerBound = state.getNumericRefinement(facetName, '>=');
           lowerBound = lowerBound && lowerBound[0] || data.min;
           if (data.from !== lowerBound) {
@@ -165,6 +151,23 @@ $(document).ready(function() {
             algoliaHelper.addNumericRefinement(facetName, '<=', data.to).search();
           }
         }
+    }
+    
+    // Bind Sliders
+    for (var facetIndex = 0; facetIndex < FACETS_SLIDER.length; ++facetIndex) {
+      var facetName = FACETS_SLIDER[facetIndex];
+      var slider = $('#' + facetName + '-slider');
+      var sliderOptions = {
+        type: 'double',
+        grid: true,
+        min: slider.data('min'),
+        max: slider.data('max'),
+        from: slider.data('from'),
+        to: slider.data('to'),
+        prettify: function(num) {
+          return '$' + parseInt(num, 10);
+        },
+        onFinish: createOnFinish(facetName)
       };
       slider.ionRangeSlider(sliderOptions);
     }

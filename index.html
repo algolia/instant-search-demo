@@ -1,142 +1,66 @@
+---
+# this ensures Jekyll reads the file to be transformed into HTML later
+---
+
 <!doctype html>
 <html>
 <head>
-  <title>Instant Search Tutorial</title>
-  <!-- CSS -->
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.ion.rangeslider/2.0.12/css/ion.rangeSlider.css">
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.ion.rangeslider/2.0.12/css/ion.rangeSlider.skinFlat.css">
+  <meta charset="UTF-8">
+  <title>Media search by Algolia</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/instantsearch.js/1/instantsearch.min.css" />
   <link rel="stylesheet" type="text/css" href="css/styles.css">
-  <!-- /CSS -->
-  <meta name="google-site-verification" content="Kchm7Sc4EMavWFw1y3NC89h9SpHixZMdGMRyddMEaOI" />
+  <!--[if lte IE 9]>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <![endif]-->
 </head>
 <body>
-
-
-  <!-- Header -->
-  <header>
-    <img src="img/instant_search_logo@2x.png"/>
-    <input id="search-input" type="text" autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Search by name, brand, description..."/>
-    <div id="search-input-icon"></div>
+  <header class="row">
+    <div class="">
+      <a href="https://community.algolia.com/instantsearch.js/" class="is-logo"><img src="logo-is.png" width=40 ></a>
+      <a href="./" class="logo">You<i class="fa fa-youtube-play"></i></a>
+    </div>
+    <div class="searchbox-container">
+      <div class="input-group">
+        <input type="text" class="form-control" id="q" />
+        <span class="input-group-btn">
+          <button class="btn btn-default"><i class="fa fa-search"></i></button>
+        </span>
+      </div>
+    </div>
   </header>
-  <!-- /Header -->
-
-
-  <!-- Main -->
-  <main>
-    <!-- Left Column -->
-    <div id="left-column">
-      <div id="facets"></div>
-    </div>
-
-    <!-- Right Column -->
-    <div id="right-column">
-      <div id="sort-by">Sort by:
-        <select dir="rtl" id="sort-by-select">
-          <option value="" selected>Most relevant</option>
-          <option value="_price_asc">Lowest Price</option>
-          <option value="_price_desc">Highest Price</option>
-        </select>
-        <span class="caret"></span>
-      </div>
-      <div id="stats"></div>
+  <section class="">
+    <aside>
+      <ul class="nav nav-list">
+        <li><a href=""><i class="fa fa-home"></i> Home</a></li>
+        <li class="separator"></li>
+      </ul>
+      <h5><i class="fa fa-chevron-right"></i> Genres</h5>
+      <div id="genres"></div>
+      <h5><i class="fa fa-chevron-right"></i> Language</h5>
+      <div id="language"></div>
+      <!-- <h5><i class="fa fa-chevron-right"></i> Ratings</h5>
+      <div id="ratings"></div> -->
+      <div class="thank-you">Data courtesy of <a href="https://www.imdb.com/">imdb.com</a></div>
+    </aside>
+    <article>
+      <div id="stats" class="text-right text-muted"></div>
+      <hr />
       <div id="hits"></div>
-      <div id="pagination"></div>
-    </div>
-  </main>
-  <!-- /Main -->
-
-
-  <!-- Footer -->
-  <footer>
-    Source Code on <a href="http://github.com/algolia/instant-search-demo">Github</a> -
-    Powered by <a href="http://algolia.com">Algolia</a> - Data from <a href="https://developer.bestbuy.com">Best Buy</a>
-  </footer>
-  <!-- /Footer -->
-
-
-
-  <!-- Hit template -->
-  <script type="text/template" id="hit-template">
-    {{#hits}}
-    <div class="hit">
-      <div class="hit-image">
-        <img src="{{ image }}" alt="{{ name }}">
-      </div>
-      <div class="hit-content">
-        <h3 class="hit-price">${{ price }}</h3>
-        <h2 class="hit-name">{{{ _highlightResult.name.value }}}</h2>
-        <p class="hit-description">{{{ _highlightResult.description.value }}}</p>
-      </div>
-    </div>
-    {{/hits}}
-  </script>
-
-  <!-- Stats template -->
-  <script type="text/template" id="stats-template">
-    {{ nbHits }} Result{{#nbHits_plural}}s{{/nbHits_plural}} <span class="found-in">Found in {{ processingTimeMS }}ms</span>
-  </script>
-
-  <!-- Facet template -->
-  <script type="text/template" id="facet-template">
-    <div class="facet">
-      <h5>{{ title }}</h5>
-      <ul>
-        {{#values}}
-        <li>
-          <a href="" class="facet-link toggle-refine {{#disjunctive}}facet-disjunctive{{/disjunctive}} {{#isRefined}}facet-refined{{/isRefined}}" data-facet="{{ facet }}" data-value="{{ name }}">
-            {{ name }}<span class="facet-count">{{ count }}</span>
-          </a>
-        </li>
-        {{/values}}
-      </ul>
-    </div>
-  </script>
-
-  <!-- Slider template -->
-  <script type="text/template" id="slider-template">
-    <div class="facet">
-      <h5>{{ title }}</h5>
-      <input type="text" id="{{ facet }}-slider" data-min="{{ min }}" data-max="{{ max }}" data-from="{{ from }}" data-to="{{ to }}"/>
-    </div>
-  </script>
-
-  <!-- Pagination template -->
-  <script type="text/template" id="pagination-template">
-    <ul>
-      <li {{^prev_page}}class="disabled"{{/prev_page}}><a href="#" {{#prev_page}}class="go-to-page" data-page="{{ prev_page }}"{{/prev_page}}>&#60;</a></li>
-      {{#pages}}
-      <li class="{{#current}}active{{/current}} {{#disabled}}disabled{{/disabled}}"><a href="#" {{^disabled}} class="go-to-page" data-page="{{ number }}" {{/disabled}}>{{ number }}</a></li>
-      {{/pages}}
-      <li {{^next_page}}class="disabled"{{/next_page}}><a href="#" {{#next_page}}class="go-to-page" data-page="{{ next_page }}"{{/next_page}}>&#62;</a></li>
-    </ul>
-  </script>
-
-  <!-- No-Results template -->
-  <script type="text/template" id="no-results-template">
-    <div id="no-results-message">
-      <p>We didn't find any results for the search <em>"{{ query }}"</em>.</p>
-      <ul>
-        {{#filters}}
-        <li class="{{ class }}" data-facet="{{ facet }}" data-value="{{ facet_value }}">
-          {{ label }}<span class="value">{{ label_value }}</span><a class="remove"><img src="img/remove.svg"/></a>
-        </li>
-        {{/filters}}
-        <br>
-        <a href="" class='clear-all'>Clear all</a>
-      </ul>
-    </div>
-  </script>
-
-
-
-  <!-- Javascript -->
+      <div id="pagination" class="text-center"></div>
+    </article>
+  </section>
+  <!-- {% if site.env == 'development' %}
+    <script>
+      document.write('\x3Cscript src="//' + window.location.hostname +':8080/instantsearch.js">\x3C/script>');
+    </script>
+  {% else %} -->
   <script src="//cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
-  <script src="//cdn.jsdelivr.net/algoliasearch.helper/2/algoliasearch.helper.min.js"></script>
-  <script src="//cdn.jsdelivr.net/hogan.js/3.0.2/hogan.min.common.js"></script>
-  <script src="//cdn.jsdelivr.net/jquery.ion.rangeslider/2.0.12/js/ion.rangeSlider.min.js"></script>
-  <script src="js/app.js"></script>
-  <!-- /Javascript -->
 
+  <script src="https://cdn.jsdelivr.net/instantsearch.js/1/instantsearch.min.js"></script>
+  <!-- {% endif %} -->
+  <script src="js/app.js"></script>
 </body>
 </html>

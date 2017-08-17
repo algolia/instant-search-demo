@@ -1,8 +1,5 @@
-# [DEPRECATED]
+**Note:** this repository is hosting the demo that was previously located at [algolia/examples](https://github.com/algolia/examples/tree/master/instant-search/instantsearch.js/)
 
-This project has been moved to its own repository at [algolia/instant-search-demo](https://github.com/algolia/instant-search-demo)
-
------
 -----
 
 Instant-Search Demo

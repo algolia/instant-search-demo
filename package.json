@@ -1,21 +1,25 @@
 {
   "name": "instant-search-demo",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/algolia/instant-search-demo.git"
-  },
+  "repository": "algolia/instant-search-demo",
   "author": "Algolia team <support@algolia.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/algolia/instant-search-demo/issues"
   },
   "scripts": {
-    "dev": "browser-sync start --server . --files 'css/*,img/*,js/*,index.html' --no-open"
+    "dev": "browser-sync start --server . --files 'assets/*.css,**/*.js,**/*.html' --no-open",
+    "lint": "eslint default_version/app.js --quiet",
+    "test": "npm run lint"
   },
   "homepage": "https://github.com/algolia/instant-search-demo#readme",
-  "dependencies": {
-    "browser-sync": "2.8.1"
+  "devDependencies": {
+    "babel-eslint": "^4.1.3",
+    "browser-sync": "^2.9.8",
+    "eslint": "^1.6.0",
+    "eslint-config-airbnb": "^0.1.0",
+    "eslint-config-algolia": "^4.0.0",
+    "eslint-plugin-react": "^3.5.1"
   }
 }

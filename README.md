@@ -45,16 +45,16 @@ We've included some credentials in the code allowing you to test the demo withou
 
 ### Data import
 If you want to replicate this demo using your own Algolia credentials that you can obtain creating a free account on Algolia.com.
-Just use the ```push.rb``` script to send the data and automatically configure the product index (same for both versions).
+Just use the `push.rb` script to send the data and automatically configure the product index (same for both versions).
 
 ```sh
-$ ./push.rb YourApplicationID YourAPIKey YourIndexName
+$ ./dataset_import/push.rb YourApplicationID YourAPIKey YourIndexName
 ```
 
 Then, you'll need to replace the demo credentials with your own:
-- in ```app.js```, set your own ```APPLICATION_ID``` instead of ```"latency"``` (which is our demo ```APPLICATION_ID```),
-- in ```app.js```, set your own ```SEARCH_ONLY_API_KEY``` instead of ```"6be0576ff61c053d5f9a3225e2a90f76"```,
-- in ```app.js```, set your own ```index``` name instead of ```"instant_search"```.
+- in `app.js`, set your own `APPLICATION_ID` instead of `"latency"` (which is our demo `APPLICATION_ID`),
+- in `app.js`, set your own `SEARCH_ONLY_API_KEY` instead of `"6be0576ff61c053d5f9a3225e2a90f76"`,
+- in `app.js`, set your own `index` name instead of `"instant_search"`.
 
 
 We've extracted 20 000+ products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).

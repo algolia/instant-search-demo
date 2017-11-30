@@ -34,11 +34,11 @@ The code is available in the files `index-simplified.html` and `search-simplifie
 To hack and develop on this current repository:
 
 ```sh
-$ git clone git@github.com:algolia/examples.git
+$ git clone git@github.com:algolia/instant-search-demo.git
+$ cd instant-search-demo
 $ npm install
-$ cd instant-search/instantsearch.js/
 $ npm run dev
-$ open http://localhost:3000/default_version/
+$ open http://localhost:3000
 ```
 
 We've included some credentials in the code allowing you to test the demo without any Algolia account.

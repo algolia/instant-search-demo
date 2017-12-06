@@ -3,7 +3,10 @@
 app({
   appId: 'latency',
   apiKey: '6be0576ff61c053d5f9a3225e2a90f76',
-  indexName: 'instant_search'
+  indexName: 'instant_search',
+  searchParameters: {
+    hitsPerPage: 10,
+  },
 });
 
 function app(opts) {
@@ -17,6 +20,7 @@ function app(opts) {
     apiKey: opts.apiKey,
     indexName: opts.indexName,
     urlSync: true,
+    searchFunction: opts.searchFunction,
   });
 
   // ---------------------
@@ -34,13 +38,13 @@ function app(opts) {
   search.addWidget(
     instantsearch.widgets.hits({
       container: '#hits',
-      hitsPerPage: 10,
       templates: {
         item: getTemplate('hit'),
         empty: getTemplate('no-results'),
       },
       transformData: {
-        item: function (item) {
+        item(item) {
+          /* eslint-disable no-param-reassign */
           item.starsLayout = getStarsHTML(item.rating);
           item.categories = getCategoryBreadcrumb(item);
           return item;
@@ -59,13 +63,20 @@ function app(opts) {
     instantsearch.widgets.sortBySelector({
       container: '#sort-by',
       autoHideContainer: true,
-      indices: [{
-        name: opts.indexName, label: 'Most relevant',
-      }, {
-        name: `${opts.indexName}_price_asc`, label: 'Lowest price',
-      }, {
-        name: `${opts.indexName}_price_desc`, label: 'Highest price',
-      }],
+      indices: [
+        {
+          name: opts.indexName,
+          label: 'Most relevant',
+        },
+        {
+          name: `${opts.indexName}_price_asc`,
+          label: 'Lowest price',
+        },
+        {
+          name: `${opts.indexName}_price_desc`,
+          label: 'Highest price',
+        },
+      ],
     })
   );
 
@@ -87,13 +98,12 @@ function app(opts) {
       attributes: [
         'hierarchicalCategories.lvl0',
         'hierarchicalCategories.lvl1',
-        'hierarchicalCategories.lvl2'],
-      sortBy: ['isRefined', 'count:desc', 'name:asc'],
+        'hierarchicalCategories.lvl2',
+      ],
       showParentLevel: true,
-      limit: 10,
       templates: {
         header: getHeader('Category'),
-        item:  '<a href="javascript:void(0);" class="facet-item {{#isRefined}}active{{/isRefined}}"><span class="facet-name"><i class="fa fa-angle-right"></i> {{name}}</span class="facet-name"><span class="ais-hierarchical-menu--count">{{count}}</span></a>' // eslint-disable-line
+        item:  '<a href="{{url}}" class="facet-item {{#isRefined}}active{{/isRefined}}"><span class="facet-name"><i class="fa fa-angle-right"></i> {{label}}</span class="facet-name"><span class="ais-hierarchical-menu--count">{{count}}</span></a>' // eslint-disable-line
       },
     })
   );
@@ -102,9 +112,7 @@ function app(opts) {
     instantsearch.widgets.refinementList({
       container: '#brand',
       attributeName: 'brand',
-      sortBy: ['isRefined', 'count:desc', 'name:asc'],
       limit: 5,
-      operator: 'or',
       showMore: {
         limit: 10,
       },
@@ -128,7 +136,7 @@ function app(opts) {
       container: '#price',
       attributeName: 'price',
       tooltips: {
-        format: function (rawValue) {
+        format(rawValue) {
           return `$${Math.round(rawValue).toLocaleString()}`;
         },
       },
@@ -232,10 +240,12 @@ function getCategoryBreadcrumb(item) {
 
 function getStarsHTML(rating, maxRating) {
   let html = '';
-  maxRating = maxRating || 5;
+  const newRating = maxRating || 5;
 
-  for (let i = 0; i < maxRating; ++i) {
-    html += `<span class="ais-star-rating--star${i < rating ? '' : '__empty'}"></span>`;
+  for (let i = 0; i < newRating; ++i) {
+    html += `<span class="ais-star-rating--star${
+      i < rating ? '' : '__empty'
+    }"></span>`;
   }
 
   return html;

@@ -31,14 +31,16 @@ The code is available in the files `index-simplified.html` and `search-simplifie
 * Backup search parameters in the URL
 
 ## Run and develop locally
-To hack and develop on this current repository:
+
+First, [install nvm](https://github.com/creationix/nvm#installation, then run:
 
 ```sh
-$ git clone git@github.com:algolia/instant-search-demo.git
-$ cd instant-search-demo
-$ npm install
-$ npm run dev
-$ open http://localhost:3000
+git clone git@github.com:algolia/instant-search-demo.git
+cd instant-search-demo
+nvm use
+npm install
+npm start
+open http://localhost:3000
 ```
 
 We've included some credentials in the code allowing you to test the demo without any Algolia account.

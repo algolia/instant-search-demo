@@ -1,6 +1,7 @@
 /* GENERAL */
 * {
   font-family: 'Helvetica Neue', Helvetica, sans-serif;
+  box-sizing: border-box;
 }
 html {
   overflow-y: scroll;
@@ -41,12 +42,28 @@ header img {
   float: left;
   max-width: 23%;
 }
+.ais-search-box {
+  max-width: none;
+}
+.ais-search-box--reset {
+  top: 16px;
+}
+.ais-search-box--magnifier {
+  top: 16px;
+}
+.ais-search-box--magnifier svg, .ais-search-box--reset svg {
+  width: 20px;
+  height: 20px;
+  fill: rgb(142, 142, 142);
+}
+#search-input {
+  margin-left: 26%;
+}
 #search-input input {
   font-size: 28px;
+  padding-left: 100px;  
   font-weight: 100;
-  width: 74%;
-  margin-left: 26%;
-  padding: 10px 0 6px;
+  padding: 10px 10px 5px 35px;
   border: none;
   border-bottom: 5px solid #eee;
 }
@@ -60,23 +77,6 @@ header img {
 #search-input input::-webkit-input-placeholder, #search-input input:-moz-placeholder, #search-input input:-moz-placeholder, #search-input input:-ms-input-placeholder {
   font-weight: 100;
   color: #999;
-}
-#search-input-icon {
-  position: relative;
-}
-#search-input-icon:before {
-  position: absolute;
-  right: 0;
-  bottom: 15px;
-  width: 20px;
-  height: 20px;
-  content: '';
-  cursor: default;
-  background: url(img/search_icon.png) no-repeat;
-}
-#search-input-icon.empty:before {
-  cursor: pointer;
-  background-image: url(img/delete_icon.png);
 }
 
 /* HITS */
@@ -412,13 +412,8 @@ a.clear-all:hover {
 }
 
 /* SLIDER */
-.ais-range-slider--target {
-  margin: 40px 30px 50px 0;
-  font-size: 13px;
-}
-
-.ais-range-slider--connect {
-  background: #ed5565;
+.ais-range-slider .rheostat-progress {
+  background-color: #ed5565;
 }
 
 .ais-range-slider--handle {
@@ -426,8 +421,8 @@ a.clear-all:hover {
 }
 
 .ais-body.ais-range-slider--body {
-  left: 10px;
-  position: relative;
+  width: 90%;
+  margin: 0 auto;
 }
 
 /* Star Rating */

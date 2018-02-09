@@ -26,7 +26,7 @@
   "devDependencies": {
     "babel-eslint": "8.2.1",
     "browser-sync": "2.23.6",
-    "eslint": "4.12.1",
+    "eslint": "4.17.0",
     "eslint-config-algolia": "13.0.1",
     "eslint-config-prettier": "2.9.0",
     "eslint-plugin-import": "2.8.0",

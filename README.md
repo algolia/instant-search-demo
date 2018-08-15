@@ -47,10 +47,12 @@ We've included some credentials in the code allowing you to test the demo withou
 
 ### Data import
 If you want to replicate this demo using your own Algolia credentials that you can obtain creating a free account on Algolia.com.
-Just use the `push.rb` script to send the data and automatically configure the product index (same for both versions).
+
+Just install the Ruby `algoliasearch` gem and use the `push.rb` script to send the data and automatically configure the product index (same for both versions).
 
 ```sh
-$ ./dataset_import/push.rb YourApplicationID YourAPIKey YourIndexName
+$ gem install algoliasearch
+$ ./dataset_import/push.rb YourApplicationID YourAdminAPIKey YourIndexName
 ```
 
 Then, you'll need to replace the demo credentials with your own:

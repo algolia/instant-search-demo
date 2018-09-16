@@ -32,7 +32,7 @@ The code is available in the files `index-simplified.html` and `search-simplifie
 
 ## Run and develop locally
 
-First, [install nvm](https://github.com/creationix/nvm#installation, then run:
+First, [install nvm](https://github.com/creationix/nvm#installation), then run:
 
 ```sh
 git clone git@github.com:algolia/instant-search-demo.git
@@ -56,9 +56,9 @@ $ ./dataset_import/push.rb YourApplicationID YourAdminAPIKey YourIndexName
 ```
 
 Then, you'll need to replace the demo credentials with your own:
-- in `app.js`, set your own `APPLICATION_ID` instead of `"latency"` (which is our demo `APPLICATION_ID`),
-- in `app.js`, set your own `SEARCH_ONLY_API_KEY` instead of `"6be0576ff61c053d5f9a3225e2a90f76"`,
-- in `app.js`, set your own `index` name instead of `"instant_search"`.
+- in `search.js` and `search-simplified.js`, set your own `APPLICATION_ID` instead of `"latency"` (which is our demo `APPLICATION_ID`),
+- in `search.js` and `search-simplified.js`, set your own `SEARCH_ONLY_API_KEY` instead of `"6be0576ff61c053d5f9a3225e2a90f76"`,
+- in `search.js` and `search-simplified.js`, set your own `index` name instead of `"instant_search"`.
 
 
 We've extracted 20 000+ products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).

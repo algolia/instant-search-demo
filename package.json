@@ -28,7 +28,7 @@
     "browser-sync": "2.26.3",
     "eslint": "4.19.1",
     "eslint-config-algolia": "13.2.3",
-    "eslint-config-prettier": "2.10.0",
+    "eslint-config-prettier": "3.6.0",
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-prettier": "2.7.0",
     "prettier": "1.15.3"

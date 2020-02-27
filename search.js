@@ -1,4 +1,4 @@
-/* global instantsearch */
+/* global instantsearch algoliasearch */
 
 app({
   appId: 'latency',
@@ -16,10 +16,9 @@ function app(opts) {
   //
   // ---------------------
   const search = instantsearch({
-    appId: opts.appId,
-    apiKey: opts.apiKey,
+    searchClient: algoliasearch(opts.appId, opts.apiKey),
     indexName: opts.indexName,
-    urlSync: true,
+    routing: true,
     searchFunction: opts.searchFunction,
   });
 
@@ -28,71 +27,56 @@ function app(opts) {
   //  Default widgets
   //
   // ---------------------
-  search.addWidget(
+  search.addWidgets([
     instantsearch.widgets.searchBox({
       container: '#search-input',
       placeholder: 'Search for products by name, type, brand, ...',
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.hits({
       container: '#hits',
       templates: {
         item: getTemplate('hit'),
         empty: getTemplate('no-results'),
       },
-      transformData: {
-        item(item) {
+      transformItems(items) {
+        return items.map(item => {
           /* eslint-disable no-param-reassign */
           item.starsLayout = getStarsHTML(item.rating);
           item.categories = getCategoryBreadcrumb(item);
           return item;
-        },
+        });
       },
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.stats({
       container: '#stats',
-    })
-  );
-
-  search.addWidget(
-    instantsearch.widgets.sortBySelector({
+    }),
+    instantsearch.widgets.sortBy({
       container: '#sort-by',
-      autoHideContainer: true,
-      indices: [
+      items: [
         {
-          name: opts.indexName,
+          value: opts.indexName,
           label: 'Most relevant',
         },
         {
-          name: `${opts.indexName}_price_asc`,
+          value: `${opts.indexName}_price_asc`,
           label: 'Lowest price',
         },
         {
-          name: `${opts.indexName}_price_desc`,
+          value: `${opts.indexName}_price_desc`,
           label: 'Highest price',
         },
       ],
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.pagination({
       container: '#pagination',
       scrollTo: '#search-input',
-    })
-  );
+    }),
 
-  // ---------------------
-  //
-  //  Filtering widgets
-  //
-  // ---------------------
-  search.addWidget(
+    // ---------------------
+    //
+    //  Filtering widgets
+    //
+    // ---------------------
     instantsearch.widgets.hierarchicalMenu({
       container: '#hierarchical-categories',
       attributes: [
@@ -105,17 +89,13 @@ function app(opts) {
         header: getHeader('Category'),
         item:  '<a href="{{url}}" class="facet-item {{#isRefined}}active{{/isRefined}}"><span class="facet-name"><i class="fa fa-angle-right"></i> {{label}}</span class="facet-name"><span class="ais-hierarchical-menu--count">{{count}}</span></a>' // eslint-disable-line
       },
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.refinementList({
       container: '#brand',
-      attributeName: 'brand',
+      attribute: 'brand',
       limit: 5,
-      showMore: {
-        limit: 10,
-      },
+      showMore: true,
+      showMoreLimit: 10,
       searchForFacetValues: {
         placeholder: 'Search for brands',
         templates: {
@@ -124,17 +104,24 @@ function app(opts) {
       },
       templates: {
         header: getHeader('Brand'),
+        showMoreText: `
+          {{#isShowingMore}}
+            <span class="isShowingLess"></span>
+            Show less
+          {{/isShowingMore}}
+          {{^isShowingMore}}
+            <span class="isShowingMore"></span>
+            Show more
+          {{/isShowingMore}}
+        `,
       },
       collapsible: {
         collapsed: false,
       },
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.rangeSlider({
       container: '#price',
-      attributeName: 'price',
+      attribute: 'price',
       tooltips: {
         format(rawValue) {
           return `$${Math.round(rawValue).toLocaleString()}`;
@@ -146,31 +133,10 @@ function app(opts) {
       collapsible: {
         collapsed: false,
       },
-    })
-  );
-
-  search.addWidget(
-    instantsearch.widgets.priceRanges({
-      container: '#price-range',
-      attributeName: 'price',
-      labels: {
-        currency: '$',
-        separator: 'to',
-        button: 'Apply',
-      },
-      templates: {
-        header: getHeader('Price range'),
-      },
-      collapsible: {
-        collapsed: true,
-      },
-    })
-  );
-
-  search.addWidget(
-    instantsearch.widgets.starRating({
+    }),
+    instantsearch.widgets.ratingMenu({
       container: '#stars',
-      attributeName: 'rating',
+      attribute: 'rating',
       max: 5,
       labels: {
         andUp: '& Up',
@@ -181,13 +147,10 @@ function app(opts) {
       collapsible: {
         collapsed: false,
       },
-    })
-  );
-
-  search.addWidget(
-    instantsearch.widgets.toggle({
+    }),
+    instantsearch.widgets.toggleRefinement({
       container: '#free-shipping',
-      attributeName: 'free_shipping',
+      attribute: 'free_shipping',
       label: 'Free Shipping',
       values: {
         on: true,
@@ -198,24 +161,30 @@ function app(opts) {
       collapsible: {
         collapsed: true,
       },
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.menu({
       container: '#type',
-      attributeName: 'type',
-      sortBy: ['isRefined', 'count:desc', 'name:asc'],
+      attribute: 'type',
       limit: 10,
       showMore: true,
       templates: {
         header: getHeader('Type'),
+        showMoreText: `
+          {{#isShowingMore}}
+            <span class="isShowingLess"></span>
+            Show less
+          {{/isShowingMore}}
+          {{^isShowingMore}}
+            <span class="isShowingMore"></span>
+            Show more
+          {{/isShowingMore}}
+        `,
       },
       collapsible: {
         collapsed: true,
       },
-    })
-  );
+    }),
+  ]);
 
   search.start();
 }

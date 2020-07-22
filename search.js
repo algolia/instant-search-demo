@@ -77,7 +77,11 @@ function app(opts) {
     //  Filtering widgets
     //
     // ---------------------
-    instantsearch.widgets.hierarchicalMenu({
+    instantsearch.widgets.panel({
+      templates: {
+        header: getHeaderTemplate('category'),
+      },
+    })(instantsearch.widgets.hierarchicalMenu)({
       container: '#hierarchical-categories',
       attributes: [
         'hierarchicalCategories.lvl0',
@@ -86,24 +90,25 @@ function app(opts) {
       ],
       showParentLevel: true,
       templates: {
-        header: getHeader('Category'),
-        item:  '<a href="{{url}}" class="facet-item {{#isRefined}}active{{/isRefined}}"><span class="facet-name"><i class="fa fa-angle-right"></i> {{label}}</span class="facet-name"><span class="ais-hierarchical-menu--count">{{count}}</span></a>' // eslint-disable-line
+        item:
+          '<a href="{{url}}" class="facet-item {{#isRefined}}active{{/isRefined}}"><span class="facet-name"><i class="fa fa-angle-right"></i> {{label}}</span class="facet-name"><span class="ais-HierarchicalMenu-count">{{count}}</span></a>', // eslint-disable-line
       },
     }),
-    instantsearch.widgets.refinementList({
+    instantsearch.widgets.panel({
+      templates: {
+        header: getHeaderTemplate('brand'),
+      },
+    })(instantsearch.widgets.refinementList)({
       container: '#brand',
       attribute: 'brand',
       limit: 5,
       showMore: true,
       showMoreLimit: 10,
-      searchForFacetValues: {
-        placeholder: 'Search for brands',
-        templates: {
-          noResults: '<div class="sffv_no-results">No matching brands.</div>',
-        },
-      },
+      searchable: true,
+      searchablePlaceholder: 'Search for brands',
       templates: {
-        header: getHeader('Brand'),
+        searchableNoResults:
+          '<div class="sffv_no-results">No matching brands.</div>',
         showMoreText: `
           {{#isShowingMore}}
             <span class="isShowingLess"></span>
@@ -115,11 +120,12 @@ function app(opts) {
           {{/isShowingMore}}
         `,
       },
-      collapsible: {
-        collapsed: false,
-      },
     }),
-    instantsearch.widgets.rangeSlider({
+    instantsearch.widgets.panel({
+      templates: {
+        header: getHeaderTemplate('price'),
+      },
+    })(instantsearch.widgets.rangeSlider)({
       container: '#price',
       attribute: 'price',
       tooltips: {
@@ -127,48 +133,41 @@ function app(opts) {
           return `$${Math.round(rawValue).toLocaleString()}`;
         },
       },
-      templates: {
-        header: getHeader('Price'),
-      },
-      collapsible: {
-        collapsed: false,
-      },
     }),
-    instantsearch.widgets.ratingMenu({
+    instantsearch.widgets.panel({
+      templates: {
+        header: getHeaderTemplate('rating'),
+      },
+    })(instantsearch.widgets.ratingMenu)({
       container: '#stars',
       attribute: 'rating',
       max: 5,
       labels: {
         andUp: '& Up',
       },
-      templates: {
-        header: getHeader('Rating'),
-      },
-      collapsible: {
-        collapsed: false,
-      },
     }),
-    instantsearch.widgets.toggleRefinement({
+    instantsearch.widgets.panel({
+      templates: {
+        header: getHeaderTemplate('shipping'),
+      },
+    })(instantsearch.widgets.toggleRefinement)({
       container: '#free-shipping',
       attribute: 'free_shipping',
       label: 'Free Shipping',
       values: {
         on: true,
       },
-      templates: {
-        header: getHeader('Shipping'),
-      },
-      collapsible: {
-        collapsed: true,
-      },
     }),
-    instantsearch.widgets.menu({
+    instantsearch.widgets.panel({
+      templates: {
+        header: getHeaderTemplate('type'),
+      },
+    })(instantsearch.widgets.menu)({
       container: '#type',
       attribute: 'type',
       limit: 10,
       showMore: true,
       templates: {
-        header: getHeader('Type'),
         showMoreText: `
           {{#isShowingMore}}
             <span class="isShowingLess"></span>
@@ -179,9 +178,6 @@ function app(opts) {
             Show more
           {{/isShowingMore}}
         `,
-      },
-      collapsible: {
-        collapsed: true,
       },
     }),
   ]);
@@ -198,8 +194,8 @@ function getTemplate(templateName) {
   return document.querySelector(`#${templateName}-template`).innerHTML;
 }
 
-function getHeader(title) {
-  return `<h5>${title}</h5>`;
+function getHeaderTemplate(name) {
+  return `<div class="ais-header"><h5>${name}</h5></div>`;
 }
 
 function getCategoryBreadcrumb(item) {

@@ -1,4 +1,4 @@
-/* global instantsearch */
+/* global instantsearch algoliasearch */
 
 app({
   appId: 'latency',
@@ -11,79 +11,59 @@ app({
 
 function app(opts) {
   const search = instantsearch({
-    appId: opts.appId,
-    apiKey: opts.apiKey,
+    searchClient: algoliasearch(opts.appId, opts.apiKey),
     indexName: opts.indexName,
-    urlSync: true,
+    routing: true,
     searchFunction: opts.searchFunction,
   });
 
-  search.addWidget(
+  search.addWidgets([
     instantsearch.widgets.searchBox({
       container: '#search-input',
       placeholder: 'Search for products',
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.hits({
       container: '#hits',
       templates: {
         item: getTemplate('hit'),
         empty: getTemplate('no-results'),
       },
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.stats({
       container: '#stats',
-    })
-  );
-
-  search.addWidget(
-    instantsearch.widgets.sortBySelector({
+    }),
+    instantsearch.widgets.sortBy({
       container: '#sort-by',
-      autoHideContainer: true,
-      indices: [
+      items: [
         {
-          name: opts.indexName,
+          value: opts.indexName,
           label: 'Most relevant',
         },
         {
-          name: `${opts.indexName}_price_asc`,
+          value: `${opts.indexName}_price_asc`,
           label: 'Lowest price',
         },
         {
-          name: `${opts.indexName}_price_desc`,
+          value: `${opts.indexName}_price_desc`,
           label: 'Highest price',
         },
       ],
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.pagination({
       container: '#pagination',
       scrollTo: '#search-input',
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.refinementList({
       container: '#category',
-      attributeName: 'categories',
+      attribute: 'categories',
       operator: 'or',
       templates: {
         header: getHeader('Category'),
       },
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.refinementList({
       container: '#brand',
-      attributeName: 'brand',
+      attribute: 'brand',
       operator: 'or',
       searchForFacetValues: {
         placeholder: 'Search for brands',
@@ -94,29 +74,23 @@ function app(opts) {
       templates: {
         header: getHeader('Brand'),
       },
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.rangeSlider({
       container: '#price',
-      attributeName: 'price',
+      attribute: 'price',
       templates: {
         header: getHeader('Price'),
       },
-    })
-  );
-
-  search.addWidget(
+    }),
     instantsearch.widgets.refinementList({
       container: '#type',
-      attributeName: 'type',
+      attribute: 'type',
       operator: 'and',
       templates: {
         header: getHeader('Type'),
       },
-    })
-  );
+    }),
+  ]);
 
   search.start();
 }

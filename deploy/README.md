@@ -54,3 +54,12 @@ Use the default id_rsa key for the ssh key auth (passphrase will be ask if neede
 ```
     ./deploy/setup.sh
 ```
+
+### Prepare the Cluster
+- Cert-Manager
+- ArgoCD
+
+```
+    export ARGO_ADMIN_PASSWORD="mon_admin_pass"
+    ./deploy/terraform_setup.sh
+```

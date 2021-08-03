@@ -1,0 +1,28 @@
+configs:
+  secret:
+    createSecret: true
+    argocdServerAdminPassword: ${argoPass}
+    argocdServerAdminPasswordMtime: "2020-01-01T00:00:00Z"
+
+server:
+    ingress:
+        enabled: true
+        annotations:
+            "kubernetes.io/ingress.class": "nginx"
+            "cert-manager.io/cluster-issuer": "ca-issuer"
+            "nginx.ingress.kubernetes.io/force-ssl-redirect": "true" 
+            "nginx.ingress.kubernetes.io/ssl-passthrough": "true"
+            "nginx.ingress.kubernetes.io/backend-protocol": "HTTPS"
+        hosts:
+            - argocd.microk8s.local
+        https: true
+        tls: 
+            - secretName: argocd-cert
+              hosts: 
+                - argocd.microk8s.local
+ 
+    config:
+        url: https://argocd.microk8s.local
+        repositories: |
+            - url: "https://github.com/miragecentury/instant-search-demo-argocd/"
+

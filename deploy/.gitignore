@@ -1,0 +1,11 @@
+# Vagrant local dir
+.vagrant
+
+# Terraform local state, provider directory
+terraform/.terraform
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform.lock.hcl
+
+#
+.DS_Store

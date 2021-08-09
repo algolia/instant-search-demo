@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -e
 
 # Setup Specific CAROOT for the local env in microk8s
 export CAROOT=./deploy/tmp

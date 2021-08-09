@@ -24,7 +24,8 @@ microk8s.enable ingress
 microk8s.enable storage
 microk8s.enable prometheus
 microk8s.enable metrics-server
-microk8s.enable istio
+# Remove Istio to prevent the overload on single VM
+# microk8s.enable istio
 
 mkdir -p /home/vagrant/.kube
 microk8s config > /home/vagrant/.kube/config

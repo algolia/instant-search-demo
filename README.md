@@ -63,6 +63,24 @@ Then, you'll need to replace the demo credentials with your own:
 
 We've extracted 20 000+ products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).
 
+## Deployment
+
+Following sections help you to deploy the demo website.
+
+1. [The hard way](#self-hosted---the-hard-way)
+2. [The easy way](#github-pages---the-easy-way)
+
+### Self hosted - the hard way
+
+The hard way is to manage your own webserver and serve the static files.
+
+As an example, see the [Nginx documentation](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/) which can be deployed with the [free Nginx software](https://nginx.org/en/docs/).
+
+### Github pages - the easy way
+
+The easiest way to deploy this demo is through [GitHub Pages](https://pages.github.com/) with your own fork.
+See here the result: <https://holyhope-algolia.github.io/instant-search-demo/>
+
 ## Tutorial
 
 **Follow this [step by step tutorial](https://www.algolia.com/doc/tutorials/search-ui/instant-search/build-an-instant-search-results-page/instantsearchjs/) (on Algolia.com) to learn how this implementation works** and how it has been built using the [instantsearch.js library](https://community.algolia.com/instantsearch.js/).

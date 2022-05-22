@@ -1,0 +1,12 @@
+.eslintrc.js
+.nvmrc
+.travis.yml
+
+*.log
+*.json
+instant-search-demo-*.tgz
+
+chart
+dataset_import
+node_modules
+screenshots

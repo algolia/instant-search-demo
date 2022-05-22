@@ -69,6 +69,7 @@ Following sections help you to deploy the demo website.
 
 1. [The hard way](#self-hosted---the-hard-way)
 2. [The easy way](#github-pages---the-easy-way)
+3. [The cloud native way](#kubernetes---the-cloud-native-way)
 
 ### Self hosted - the hard way
 
@@ -80,6 +81,31 @@ As an example, see the [Nginx documentation](https://docs.nginx.com/nginx/admin-
 
 The easiest way to deploy this demo is through [GitHub Pages](https://pages.github.com/) with your own fork.
 See here the result: <https://holyhope-algolia.github.io/instant-search-demo/>
+
+### Kubernetes - the cloud native way
+
+The most CloudNative solution would be to deploy the demo in your Kubernetes cluster.
+
+_Required command line interfaces_: [`docker`](https://docs.docker.com/get-docker/), [`helm`](https://helm.sh/docs/intro/install/), [`npm`](https://docs.npmjs.com/getting-started)
+
+1. Build the container image and the Helm chart, then push the image:
+
+   ```bash
+   export docker_registry=docker.io/holyhope
+   npm run build
+   npm run publish
+   ```
+
+2. Great! After that, install the website thanks to the chart:
+
+   ```bash
+   npm run deploy
+   ```
+
+3. Expose the service.
+   The recommended way is by using an [Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/). Select the one depending of your cluster configuration. If you do not know which one is appropriated, [nginx controller](https://github.com/kubernetes/ingress-nginx/blob/main/README.md#readme) should do the trick.
+
+   This controller will help you to setup the SSL protocol.
 
 ## Tutorial
 

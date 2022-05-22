@@ -6,8 +6,16 @@
   "author": "Algolia (https://www.algolia.com)",
   "license": "MIT",
   "scripts": {
+    "build": "npm run build-container && npm run build-chart",
+    "build-container": "podman build . -t ${docker_registry:-algolia}/$npm_package_name:$npm_package_version",
+    "build-chart": "helm package ./chart --app-version $npm_package_version",
+    "publish": "npm run publish-container",
+    "publish-container": "podman push ${docker_registry:-algolia}/$npm_package_name:$npm_package_version",
+    "deploy": "helm upgrade -i -n algolia $npm_package_name ./$npm_package_name-$(helm show chart ./chart | grep '^version:' | awk '{print $2}').tgz --create-namespace",
     "start": "browser-sync start --server . --files 'assets/*.css,**/*.js,**/*.html' --no-open",
-    "lint": "eslint .",
+    "lint": "npm run lint-es && npm run lint-helm",
+    "lint-es": "eslint .",
+    "lint-helm": "helm lint ./chart",
     "lint:fix": "eslint . --fix",
     "test": "npm run lint"
   },

@@ -83,10 +83,15 @@ The hard way is to manage your own webserver and serve the static files.
 
 As an example, see the [Nginx documentation](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/) which can be deployed with the [free Nginx software](https://nginx.org/en/docs/).
 
+You are responsible to manage application deployment, which means you need to take care about security, monitoring and rollback in case of failure.
+
 ### Github pages - the easy way
 
 The easiest way to deploy this demo is through [GitHub Pages](https://pages.github.com/) with your own fork.
 See here the result: <https://holyhope-algolia.github.io/instant-search-demo/>
+
+Github automatically handle SSL and basic webserver settings. It ensures itself to automatically deploys the desired branch.
+Take care about application version, in case of bad commit, you will need to rollback/revert the commit.
 
 ### Kubernetes - the cloud native way
 
@@ -102,13 +107,34 @@ _Required command line interfaces_: [`docker`](https://docs.docker.com/get-docke
    npm run publish
    ```
 
-2. Great! After that, install the website thanks to the chart:
+1. Be ready to expose the new service.
+
+   The recommended way is by using an [Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/). Select the one depending of your cluster configuration. If you do not know which one is appropriated, [nginx controller](https://github.com/kubernetes/ingress-nginx/blob/main/README.md#readme) should do the trick.
+
+   This controller will help you to setup the SSL protocol.
+
+1. Great! After that, install the website thanks to the chart:
 
    ```bash
    npm run deploy
    ```
 
-3. Expose the service.
-   The recommended way is by using an [Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/). Select the one depending of your cluster configuration. If you do not know which one is appropriated, [nginx controller](https://github.com/kubernetes/ingress-nginx/blob/main/README.md#readme) should do the trick.
+   In case of error, do not panic, the service is still up since the new deployment is not yet exposed.
+   __Please rollback this bad deployment otherwise, in some edge case, the last working deployment may failed and never go up and running again.__
 
-   This controller will help you to setup the SSL protocol.
+   1. Identify the previous working version:
+
+      ```bash
+      helm history -n algolia instant-search-demo
+      ```
+
+   1. Rollback to the desired version:
+
+      ```bash
+      helm rollback -n algolia instant-search-demo $the_version
+      ```
+
+   Pro tip: you can also rollback automatically on failure with a single command:
+   ```bash
+   npm run deploy || helm rollback -n algolia instant-search-demo $(helm history -n algolia instant-search-demo -o json | jq '.[] | select(.status == "deployed").revision')
+   ```

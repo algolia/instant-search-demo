@@ -63,6 +63,12 @@ Then, you'll need to replace the demo credentials with your own:
 
 We've extracted 20 000+ products from the [Best Buy Developer API](https://developer.bestbuy.com). You can find the associated documentation [here](https://developer.bestbuy.com/documentation/products-api).
 
+## Tutorial
+
+**Follow this [step by step tutorial](https://www.algolia.com/doc/tutorials/search-ui/instant-search/build-an-instant-search-results-page/instantsearchjs/) (on Algolia.com) to learn how this implementation works** and how it has been built using the [instantsearch.js library](https://community.algolia.com/instantsearch.js/).
+
+A more general overview of filtering and faceting is available in a [dedicated tutorial](https://www.algolia.com/doc/tutorials/search-ui/instant-search/filtering/faceting-search-ui/instantsearchjs/).
+
 ## Deployment
 
 Following sections help you to deploy the demo website.
@@ -106,10 +112,3 @@ _Required command line interfaces_: [`docker`](https://docs.docker.com/get-docke
    The recommended way is by using an [Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/). Select the one depending of your cluster configuration. If you do not know which one is appropriated, [nginx controller](https://github.com/kubernetes/ingress-nginx/blob/main/README.md#readme) should do the trick.
 
    This controller will help you to setup the SSL protocol.
-
-## Tutorial
-
-**Follow this [step by step tutorial](https://www.algolia.com/doc/tutorials/search-ui/instant-search/build-an-instant-search-results-page/instantsearchjs/) (on Algolia.com) to learn how this implementation works** and how it has been built using the [instantsearch.js library](https://community.algolia.com/instantsearch.js/).
-
-A more general overview of filtering and faceting is available in a [dedicated tutorial](https://www.algolia.com/doc/tutorials/search-ui/instant-search/filtering/faceting-search-ui/instantsearchjs/).
-

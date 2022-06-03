@@ -31,7 +31,8 @@ jobs:
       - name: Inspect
         run: |
           docker buildx imagetools inspect localhost:5000/instant-search-demo:latest
-      - uses: engineerd/setup-kind@v0.5.0
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.2.0
       - name: Testing
         run: |
           kubectl cluster-info

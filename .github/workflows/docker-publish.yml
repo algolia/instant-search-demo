@@ -44,21 +44,21 @@ jobs:
         with:
           path: "package.json"
           prop_path: "version"
-      - name: Read the docker repo
-        id: docker
+      - name: Read the image repo
+        id: image
         uses: "notiz-dev/github-action-json-property@release"
         with:
           path: "package.json"
-          prop_path: "docker"
+          prop_path: "image"
       - name: Build and push to registry
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ${{steps.docker.outputs.prop}}:${{steps.version.outputs.prop}}
+          tags: ${{steps.image.outputs.prop}}:${{steps.version.outputs.prop}}
       - name: Inspect
         run: |
-          docker buildx imagetools inspect ${{steps.docker.outputs.prop}}:${{steps.version.outputs.prop}}
+          docker buildx imagetools inspect ${{steps.image.outputs.prop}}:${{steps.version.outputs.prop}}
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.2.0
       - name: Check cluster-info

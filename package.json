@@ -25,7 +25,7 @@
   "homepage": "https://github.com/algolia/instant-search-demo#readme",
   "devDependencies": {
     "babel-eslint": "8.2.6",
-    "browser-sync": "2.26.12",
+    "browser-sync": "^2.27.10",
     "eslint": "4.19.1",
     "eslint-config-algolia": "13.4.0",
     "eslint-config-prettier": "2.10.0",
@@ -34,7 +34,7 @@
     "prettier": "1.19.1"
   },
   "engines": {
-    "node": "9.11.2",
-    "npm": "5.10.0"
+    "node": "16.15.0",
+    "npm": "8.11.0"
   }
 }

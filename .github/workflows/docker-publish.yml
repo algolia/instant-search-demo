@@ -33,9 +33,7 @@ jobs:
           docker buildx imagetools inspect localhost:5000/instant-search-demo:latest
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.2.0
-      - name: Testing
+      - name: Check cluster-info
         run: |
           kubectl cluster-info
           kubectl get pods -n kube-system
-          echo "current-context:" $(kubectl config current-context)
-          echo "environment-kubeconfig:" ${KUBECONFIG}

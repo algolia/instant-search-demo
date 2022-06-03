@@ -1,6 +1,6 @@
 {
   "name": "instant-search-demo",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "repository": "algolia/instant-search-demo",
   "author": "Algolia (https://www.algolia.com)",
@@ -9,7 +9,8 @@
     "start": "browser-sync start --server . --files 'assets/*.css,**/*.js,**/*.html' --no-open",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "npm run lint"
+    "test": "npm run lint",
+    "build:image": "docker build . -t ${npm_package_name}:${npm_package_version}"
   },
   "renovate": {
     "extends": [

@@ -8,6 +8,7 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    needs: test
     services:
       registry:
         image: registry:2

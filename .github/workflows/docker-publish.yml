@@ -60,3 +60,6 @@ jobs:
       - name: Install chart
         run: |
           helm upgrade -i instant-search-demo ./contrib/chart/instant-search-demo --wait
+      - name: Check pod status
+        run: |
+          kubectl get pod -n default

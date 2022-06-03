@@ -38,15 +38,27 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           driver-opts: network=host
-      - name: Build and push to local registry
+      - name: Read the version
+        id: version
+        uses: "notiz-dev/github-action-json-property@release"
+        with:
+          path: "package.json"
+          prop_path: "version"
+      - name: Read the docker repo
+        id: docker
+        uses: "notiz-dev/github-action-json-property@release"
+        with:
+          path: "package.json"
+          prop_path: "docker"
+      - name: Build and push to registry
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: localhost:5000/instant-search-demo:latest
+          tags: ${{steps.docker.outputs.prop}}:${{steps.version.outputs.prop}}
       - name: Inspect
         run: |
-          docker buildx imagetools inspect localhost:5000/instant-search-demo:latest
+          docker buildx imagetools inspect ${{steps.docker.outputs.prop}}:${{steps.version.outputs.prop}}
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.2.0
       - name: Check cluster-info
@@ -59,7 +71,7 @@ jobs:
           version: v3.9.0
       - name: Install chart
         run: |
-          helm upgrade -i instant-search-demo ./contrib/chart/instant-search-demo --wait
+          echo helm upgrade -i instant-search-demo --set image.repository=${{steps.docker.outputs.prop}},image.tag=${{steps.version.outputs.prop}}./contrib/chart/instant-search-demo --wait
       - name: Check pod status
         run: |
           kubectl get pod -n default

@@ -2,6 +2,7 @@
   "name": "instant-search-demo",
   "version": "2.0.1",
   "private": true,
+  "image": "algolia/instant-search-demo",
   "repository": "algolia/instant-search-demo",
   "author": "Algolia (https://www.algolia.com)",
   "license": "MIT",
@@ -10,8 +11,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "npm run lint",
-    "build:image": "docker build . -t ${npm_package_name}:${npm_package_version}",
-    "build:push": "docker tag ${npm_package_name}:${npm_package_version} vglafirov/${npm_package_name}:${npm_package_version} && docker push vglafirov/${npm_package_name}:${npm_package_version}"
+    "build": "docker build . -t ${npm_package_image}:${npm_package_version}",
+    "push": "docker push ${npm_package_image}:${npm_package_version}"
   },
   "renovate": {
     "extends": [

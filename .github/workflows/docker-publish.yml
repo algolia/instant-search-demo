@@ -27,7 +27,14 @@ jobs:
         with:
           context: .
           push: true
-          tags: localhost:5000/name/app:latest
+          tags: localhost:5000/instant-search-demo:latest
       - name: Inspect
         run: |
-          docker buildx imagetools inspect localhost:5000/name/app:latest
+          docker buildx imagetools inspect localhost:5000/instant-search-demo:latest
+      - uses: engineerd/setup-kind@v0.5.0
+      - name: Testing
+        run: |
+          kubectl cluster-info
+          kubectl get pods -n kube-system
+          echo "current-context:" $(kubectl config current-context)
+          echo "environment-kubeconfig:" ${KUBECONFIG}

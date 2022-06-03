@@ -1,9 +1,21 @@
-FROM node:16-alpine
+FROM node:16-alpine AS build
 
-COPY . ./
+WORKDIR /build
+
+COPY . .
 
 RUN yarn install --frozen-lockfile
 
-EXPOSE 3000/tcp
+FROM nginx:alpine
 
-CMD yarn start
+WORKDIR /app
+
+COPY --from=build /build/dataset_import/ ./dataset_import/
+
+COPY --from=build /build/assets/ ./assets/
+
+COPY --from=build /build/index.html /build/index-simplified.html /build/search-simplified.js /build/search.js ./
+
+COPY ./nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 8080

@@ -1,5 +1,4 @@
 name: build
-description: Builds and inspect image
 
 on:
   push:

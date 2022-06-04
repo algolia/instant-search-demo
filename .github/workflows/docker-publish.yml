@@ -76,7 +76,7 @@ jobs:
           version: v3.9.0
       - name: Install chart
         run: |
-          echo helm upgrade -i instant-search-demo --set image.repository=${{steps.docker.outputs.prop}},image.tag=${{steps.version.outputs.prop}}./contrib/chart/instant-search-demo --wait
+          echo helm upgrade -i instant-search-demo --set image.repository=${{steps.image.outputs.prop}},image.tag=${{steps.version.outputs.prop}} ./contrib/chart/instant-search-demo --wait
       - name: Check pod status
         run: |
           kubectl get pod -n default

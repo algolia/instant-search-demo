@@ -2,7 +2,7 @@
   "name": "instant-search-demo",
   "version": "2.0.1",
   "private": true,
-  "image": "algolia/instant-search-demo",
+  "image": "vglafirov/instant-search-demo",
   "repository": "algolia/instant-search-demo",
   "author": "Algolia (https://www.algolia.com)",
   "license": "MIT",

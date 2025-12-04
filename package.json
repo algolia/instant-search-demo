@@ -30,7 +30,7 @@
     "eslint-config-algolia": "13.4.0",
     "eslint-config-prettier": "2.10.0",
     "eslint-plugin-import": "2.32.0",
-    "eslint-plugin-prettier": "2.7.0",
+    "eslint-plugin-prettier": "5.5.4",
     "prettier": "1.19.1"
   },
   "engines": {
